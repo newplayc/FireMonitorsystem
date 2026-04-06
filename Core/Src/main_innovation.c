@@ -183,11 +183,12 @@ void Display_Update(void)
 
 /**
   * @brief  检查报警条件 - 整合智能预测 + 传统阈值报警
-  *         支持Qt上位机动态设置阈值
+  *         支持Qt上位机动态设置阈值，带报警去抖机制
   */
 void Alarm_Check(void)
 {
     static uint32_t lastAlarmTime = 0;
+    static uint8_t alarmConfirmCount = 0;  /* 报警确认计数（去抖） */
     uint32_t currentTime = HAL_GetTick();
     
     bool alarmTriggered = false;
@@ -228,7 +229,7 @@ void Alarm_Check(void)
     if (!alarmTriggered && FirePredictor_IsEarlyWarning(&predictor))
     {
         /* 提前预警 - 轻柔报警 */
-        if (currentTime - lastAlarmTime > 1000)  /* 1秒间隔 */
+        if (currentTime - lastAlarmTime > 3000)  /* 3秒间隔 */
         {
             HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);  /* LED闪烁 */
             
@@ -250,17 +251,29 @@ void Alarm_Check(void)
                  predictor.currentRisk, g_alarmConfig.riskThreshold);
     }
     
+    /* ========== 报警去抖机制（新增）========== */
+    if (alarmTriggered) {
+        alarmConfirmCount++;
+        if (alarmConfirmCount < 3) {
+            /* 需要连续3次确认才触发报警（去抖） */
+            return;
+        }
+    } else {
+        /* 未检测到报警，重置计数 */
+        alarmConfirmCount = 0;
+    }
+    
     /* ========== 执行报警动作并通知上位机 ========== */
     
-    if (alarmTriggered) {
+    if (alarmTriggered && alarmConfirmCount >= 3) {
         /* 危险等级 - 强烈报警 */
         HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);  /* LED常亮 */
         
-        if (currentTime - lastAlarmTime > 500)  /* 0.5秒间隔 */
+        if (currentTime - lastAlarmTime > 3000)  /* 3秒间隔，避免重复发送 */
         {
             HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);  /* 蜂鸣器 */
             
-            /* 发送报警信息到上位机（新增） */
+            /* 发送报警信息到上位机 */
             printf("[ALARM_TRIGGERED] %s | Risk:%.2f\r\n", 
                    alarmReason, predictor.currentRisk);
             
