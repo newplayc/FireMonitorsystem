@@ -426,11 +426,6 @@
               <FilePath>.\DS18B20.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
-            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/gpio.c</FilePath>
@@ -612,6 +607,26 @@
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>sensors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\sensors.c</FilePath>
+            </File>
+            <File>
+              <FileName>main_innovation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\main_innovation.c</FilePath>
+            </File>
+            <File>
+              <FileName>fire_prediction.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\fire_prediction.c</FilePath>
+            </File>
+            <File>
+              <FileName>power_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\power_manager.c</FilePath>
             </File>
           </Files>
         </Group>
