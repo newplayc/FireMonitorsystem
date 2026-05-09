@@ -15,18 +15,18 @@
 
 /* ============================================================================
  * 默认阈值配置（上电初始值）
- * 这些值会被Qt上位机通过串口命令修改
+ * 这些值必须与Qt上位机默认阈值保持一致
  * ============================================================================ */
 
 /* 温度阈值 (摄氏度) */
-#define DEFAULT_TEMP_THRESHOLD_HIGH     50.0f   /* 高温报警阈值 */
+#define DEFAULT_TEMP_THRESHOLD_HIGH     40.0f   /* 高温报警阈值 */
 #define DEFAULT_TEMP_THRESHOLD_LOW      5.0f    /* 低温报警阈值（可选） */
 
 /* 烟雾阈值 (百分比 0-100%) */
-#define DEFAULT_SMOKE_THRESHOLD         60.0f   /* 烟雾浓度报警阈值 */
+#define DEFAULT_SMOKE_THRESHOLD         30.0f   /* 烟雾浓度报警阈值 */
 
 /* CO阈值 (ppm) */
-#define DEFAULT_CO_THRESHOLD            100.0f  /* CO浓度报警阈值 */
+#define DEFAULT_CO_THRESHOLD            50.0f   /* CO浓度报警阈值 */
 
 /* 风险值阈值 (0-1，用于AI预测算法) */
 #define DEFAULT_RISK_THRESHOLD          0.6f    /* 风险等级达到DANGER时报警 */

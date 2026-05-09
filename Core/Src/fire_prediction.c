@@ -83,8 +83,13 @@ void FirePredictor_Update(FirePredictor* predictor, float temp, float smoke, flo
 }
 
 /**
-  * @brief  计算火灾风险值 (核心算法 - 创新点)
-  *         多因素加权融合模型
+  * @brief  计算火灾风险值 (核心算法 - 数学优化版)
+  *
+  *         使用Sigmoid函数实现平滑过渡:
+  *         f(x) = 1 / (1 + e^(-k*(x - x0)))
+  *
+  *         其中 x0 = 阈值，k = 斜率
+  *
   * @param  predictor: 预测器结构体指针
   * @retval 风险值 (0.0 - 1.0)
   */
@@ -93,70 +98,102 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
     if (predictor->history.count < TREND_WINDOW) {
         return 0.0f;  /* 数据不足 */
     }
-    
-    float risk = 0.0f;
+
     TrendAnalysis trend = FirePredictor_AnalyzeTrend(predictor);
-    
+
     /* 获取当前传感器值 */
     SensorDataPoint* current = &predictor->history.data[
         (predictor->history.head - 1 + HISTORY_SIZE) % HISTORY_SIZE
     ];
-    
-    /* ====== 因素1: 温度基础风险 (权重25%) ====== */
-    if (current->temperature > 40.0f) {
-        risk += 0.25f * ((current->temperature - 40.0f) / 60.0f);
+
+    float tempRisk = 0.0f, smokeRisk = 0.0f, coRisk = 0.0f, trendRisk = 0.0f;
+
+    /*
+     * ====== 因素1: 温度风险 (权重20%) ======
+     * 阈值: 40°C (当温度=40°C时，风险=0.5)
+     * 斜率: k=0.3 (控制过渡陡峭程度)
+     * 数学推导:
+     *   - 30°C时: exp(-0.3*(30-40)) = exp(3) ≈ 20, risk ≈ 0.05
+     *   - 40°C时: exp(-0.3*(40-40)) = exp(0) = 1, risk = 0.5
+     *   - 50°C时: exp(-0.3*(50-40)) = exp(-3) ≈ 0.05, risk ≈ 0.95
+     */
+    tempRisk = 1.0f / (1.0f + expf(-0.3f * (current->temperature - 40.0f)));
+
+    /*
+     * ====== 因素2: 烟雾风险 (权重35%) ======
+     * 阈值: 30% (当烟雾=30%时，风险=0.5)
+     * 斜率: k=0.2
+     * 数学推导:
+     *   - 10%时: exp(-0.2*(10-30)) = exp(4) ≈ 54.6, risk ≈ 0.02
+     *   - 30%时: exp(0) = 1, risk = 0.5
+     *   - 50%时: exp(-0.2*(50-30)) = exp(-4) ≈ 0.018, risk ≈ 0.98
+     */
+    smokeRisk = 1.0f / (1.0f + expf(-0.2f * (current->smoke - 30.0f)));
+
+    /*
+     * ====== 因素3: CO风险 (权重25%) ======
+     * 阈值: 50 ppm (当CO=50ppm时，风险=0.5)
+     * 斜率: k=0.1
+     * 数学推导:
+     *   - 30ppm时: exp(-0.1*(30-50)) = exp(2) ≈ 7.4, risk ≈ 0.12
+     *   - 50ppm时: exp(0) = 1, risk = 0.5
+     *   - 100ppm时: exp(-0.1*(100-50)) = exp(-5) ≈ 0.007, risk ≈ 0.99
+     */
+    coRisk = 1.0f / (1.0f + expf(-0.1f * (current->co - 50.0f)));
+
+    /*
+     * ====== 因素4: 温度趋势风险 (权重20%) ======
+     * 阈值: 2°C/s (快速升温)
+     * 斜率: k=2.0 (更陡峭，因为快速升温是强信号)
+     * 数学推导:
+     *   - 0.5°C/s: exp(-2*(0.5-2)) = exp(3) ≈ 20, risk ≈ 0.05
+     *   - 2°C/s: exp(0) = 1, risk = 0.5
+     *   - 5°C/s: exp(-2*(5-2)) = exp(-6) ≈ 0.002, risk ≈ 0.998
+     */
+    float tempRate = trend.tempTrend;
+    if (tempRate < 0) tempRate = 0;  /* 降温不计风险 */
+    trendRisk = 1.0f / (1.0f + expf(-2.0f * (tempRate - 2.0f)));
+
+    /*
+     * ====== 综合风险计算 ======
+     * 权重分配:
+     *   - 烟雾: 35% (最直接火灾指标)
+     *   - CO:   25% (燃烧产物)
+     *   - 温度: 20% (环境温度)
+     *   - 趋势: 20% (变化速率)
+     */
+    float totalRisk = 0.20f * tempRisk +
+                      0.35f * smokeRisk +
+                      0.25f * coRisk +
+                      0.20f * trendRisk;
+
+    /*
+     * ====== 多因素相关性修正 (防误报) ======
+     * 如果仅温度高但烟雾和CO正常，可能是加热器等误报
+     * 条件: 温度>45°C 且 烟雾<10% 且 CO<30ppm
+     */
+    if (current->temperature > 45.0f &&
+        current->smoke < 10.0f &&
+        current->co < 30.0f) {
+        totalRisk *= 0.4f;  /* 显著降低风险 */
     }
-    
-    /* ====== 因素2: 温度趋势风险 (权重35%) - 核心创新 ====== */
-    /* 温度快速上升是火灾的重要前兆 */
-    if (trend.tempTrend > 2.0f) {
-        /* 趋势越陡峭，风险越高 */
-        float trendRisk = (trend.tempTrend / 10.0f);
-        if (trendRisk > 1.0f) trendRisk = 1.0f;
-        risk += 0.35f * trendRisk;
-        
-        /* 加速上升额外加分 */
-        if (trend.tempTrend > 5.0f) {
-            risk += 0.1f;
-        }
+
+    /*
+     * ====== 多因素联动增强 ======
+     * 如果多个指标同时异常，增加风险权重
+     * 条件: 温度>40°C 且 烟雾>20% 且 CO>40ppm
+     */
+    if (current->temperature > 40.0f &&
+        current->smoke > 20.0f &&
+        current->co > 40.0f) {
+        totalRisk *= 1.3f;  /* 增加30%风险 */
     }
-    
-    /* ====== 因素3: 温度波动性 (权重15%) ====== */
-    /* 温度剧烈波动可能预示燃烧不稳定 */
-    if (trend.tempVariance > 9.0f) {
-        risk += 0.15f * (trend.tempVariance / 25.0f);
-    }
-    
-    /* ====== 因素4: 烟雾验证 (权重25%) ====== */
-    /* 烟雾存在验证温度异常，防止误报 */
-    if (current->smoke > 20.0f) {
-        float smokeRisk = (current->smoke / 100.0f);
-        if (smokeRisk > 1.0f) smokeRisk = 1.0f;
-        risk += 0.25f * smokeRisk;
-        
-        /* 烟雾快速上升 */
-        if (trend.smokeTrend > 5.0f) {
-            risk += 0.1f;
-        }
-    }
-    
-    /* ====== 因素5: CO验证 (额外加权) ====== */
-    /* CO是燃烧的明确指标 */
-    if (current->co > 50.0f) {
-        risk += 0.1f * ((current->co - 50.0f) / 150.0f);
-    }
-    
-    /* ====== 多传感器相关性验证 (防误报机制) ====== */
-    /* 如果温度高但烟雾和CO都正常，可能是误报（如加热器） */
-    if (current->temperature > 50.0f && current->smoke < 15.0f && current->co < 30.0f) {
-        risk *= 0.5f;  /* 降低风险值 */
-    }
-    
+
     /* 风险值归一化 */
-    if (risk > 1.0f) risk = 1.0f;
-    if (risk < 0.0f) risk = 0.0f;
-    
-    return risk;
+    if (totalRisk > 1.0f) totalRisk = 1.0f;
+    if (totalRisk < 0.0f) totalRisk = 0.0f;
+
+    return totalRisk;
 }
 
 /**
