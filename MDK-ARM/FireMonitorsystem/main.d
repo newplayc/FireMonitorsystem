@@ -30,4 +30,7 @@ firemonitorsystem/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
   ..\Core\Inc\adc.h ..\Core\Inc\dma.h ..\Core\Inc\usart.h \
   ..\Core\Inc\gpio.h ..\MDK-ARM\DS18B20.h ..\Core\Src\OLED.h \
-  ..\Core\Src\OLED_Data.h
+  ..\Core\Src\OLED_Data.h ..\Core\Inc\fire_prediction.h \
+  E:\keil\ARM\ARMCLANG\include\stdbool.h ..\Core\Inc\sensors.h \
+  ..\Core\Inc\alarm_config.h E:\keil\ARM\ARMCLANG\include\stdio.h \
+  E:\keil\ARM\ARMCLANG\include\string.h

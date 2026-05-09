@@ -31,6 +31,6 @@ firemonitorsystem/main_innovation.o: ..\Core\Src\main_innovation.c \
   ..\Core\Inc\adc.h ..\Core\Inc\dma.h ..\Core\Inc\usart.h \
   ..\Core\Inc\gpio.h ..\Core\Inc\fire_prediction.h \
   E:\keil\ARM\ARMCLANG\include\stdbool.h ..\Core\Inc\power_manager.h \
-  ..\Core\Inc\sensors.h ..\Core\Src\OLED.h ..\Core\Src\OLED_Data.h \
-  E:\keil\ARM\ARMCLANG\include\stdio.h \
+  ..\Core\Inc\sensors.h ..\Core\Inc\alarm_config.h ..\Core\Src\OLED.h \
+  ..\Core\Src\OLED_Data.h E:\keil\ARM\ARMCLANG\include\stdio.h \
   E:\keil\ARM\ARMCLANG\include\string.h

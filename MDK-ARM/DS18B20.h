@@ -16,7 +16,8 @@ short DS18B20_Get_Temperature(void);
 /* 单总线底层操作函数（供外部使用） */
 void DS18B20_Rst(void);
 uint8_t DS18B20_Check(void);
-void DS18B20_WriteByte(uint8_t data);
+void DS18B20_Write_Byte(uint8_t data);
+void DS18B20_WriteByte(uint8_t data);  // 兼容性别名
 uint8_t DS18B20_Read_Byte(void);
 void DS18B20_IO_IN(void);
 void DS18B20_IO_OUT(void);
