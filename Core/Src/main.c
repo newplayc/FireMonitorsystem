@@ -169,8 +169,8 @@ void System_Init(void)
     OLED_Update(); // 确保显示已更新
 
     /* 显示启动信息 */
-    OLED_ShowString(0, 0, "Fire Monitor", 16);
-    OLED_ShowString(0, 2, "Complete Ver", 16);
+    OLED_ShowString(0, 0, "Fire Monitor", 6);
+    OLED_ShowString(0, 2, "Complete Ver", 6);
     OLED_Update(); // 更新显示
     HAL_Delay(2000);
     OLED_Clear();
@@ -228,17 +228,17 @@ void Display_Update(void)
 
     /* 传感器数据 */
     sprintf(buf, "T:%.1f S:%.0f%%", currentTemp, currentSmoke);
-    OLED_ShowString(0, 0, buf, 12);
+    OLED_ShowString(0, 0, buf, 6);
 
     /* 风险值 */
     sprintf(buf, "Risk:%.2f", predictor.currentRisk);
-    OLED_ShowString(0, 2, buf, 12);
+    OLED_ShowString(0, 2, buf, 6);
 
     /* 报警状态 */
     if (alarmState) {
-        OLED_ShowString(0, 4, "ALARM!", 12);
+        OLED_ShowString(0, 4, "ALARM!", 6);
     } else {
-        OLED_ShowString(0, 4, "Normal", 12);
+        OLED_ShowString(0, 4, "Normal", 6);
     }
 
     /* 更新显示 */
@@ -541,21 +541,21 @@ void Check_System_Status(void)
     OLED_Clear();
     OLED_Update();
 
-    OLED_ShowString(0, 0, "System Check", 12);
+    OLED_ShowString(0, 0, "System Check", 6);
     sprintf(buf, "ADC: %d %d", adc_dma_buffer[0], adc_dma_buffer[1]);
-    OLED_ShowString(0, 1, buf, 12);
+    OLED_ShowString(0, 1, buf, 6);
 
     if (currentTemp > -50) {
         sprintf(buf, "T:%.1fC", currentTemp);
-        OLED_ShowString(0, 2, buf, 12);
+        OLED_ShowString(0, 2, buf, 6);
     }
     if (currentSmoke > 0) {
         sprintf(buf, "S:%.0f%%", currentSmoke);
-        OLED_ShowString(0, 3, buf, 12);
+        OLED_ShowString(0, 3, buf, 6);
     }
     if (currentCO > 0) {
         sprintf(buf, "CO:%.0f", currentCO);
-        OLED_ShowString(0, 4, buf, 12);
+        OLED_ShowString(0, 4, buf, 6);
     }
 
     OLED_Update();
@@ -574,13 +574,13 @@ void Test_OLED(void)
 
     /* 显示系统状态 */
     sprintf(buf, "STM32 OK");
-    OLED_ShowString(0, 0, buf, 12);
+    OLED_ShowString(0, 0, buf, 6);
 
     sprintf(buf, "ADC Ready");
-    OLED_ShowString(0, 2, buf, 12);
+    OLED_ShowString(0, 2, buf, 6);
 
     sprintf(buf, "UART OK");
-    OLED_ShowString(0, 4, buf, 12);
+    OLED_ShowString(0, 4, buf, 6);
 
     OLED_Update();
 
@@ -590,13 +590,13 @@ void Test_OLED(void)
     OLED_Clear();
     OLED_Update();
 
-    OLED_ShowString(0, 0, "Sensors:", 12);
+    OLED_ShowString(0, 0, "Sensors:", 6);
     sprintf(buf, "Temp: --");
-    OLED_ShowString(0, 1, buf, 12);
+    OLED_ShowString(0, 1, buf, 6);
     sprintf(buf, "Smoke: --");
-    OLED_ShowString(0, 2, buf, 12);
+    OLED_ShowString(0, 2, buf, 6);
     sprintf(buf, "CO: --");
-    OLED_ShowString(0, 3, buf, 12);
+    OLED_ShowString(0, 3, buf, 6);
     OLED_Update();
 }
 
