@@ -278,46 +278,104 @@ void Display_Update(void)
 }
 
 /**
- * @brief  检查报警条件
+ * @brief  检查报警条件 - 分级报警机制
  */
 void Check_Alarm(void)
 {
-    uint8_t newAlarmState = 0;
+    uint8_t newAlarmLevel = 0;  /* 0=正常, 1=注意, 2=警告, 3=危险, 4=紧急 */
+    uint8_t alarmSource = 0;    /* 报警来源: 0=无, 1=温度, 2=烟雾, 3=CO, 4=AI预测 */
+    const char* alarmReason = "";
+    const char* alarmLevelNames[] = {"SAFE", "NOTICE", "WARNING", "DANGER", "CRITICAL"};
 
-    /* 检查温度报警 */
-    if (currentTemp >= g_alarmConfig.tempThresholdHigh) {
-        newAlarmState = 1;
+    /* 优先检查AI预测报警（风险等级高） */
+    if (predictor.riskLevel >= RISK_CRITICAL) {
+        newAlarmLevel = 4;
+        alarmSource = 4;  /* AI预测 */
+        alarmReason = "AI预测紧急风险";
     }
-    /* 检查烟雾报警 */
-    else if (currentSmoke >= g_alarmConfig.smokeThreshold) {
-        newAlarmState = 1;
-    }
-    /* 检查CO报警 */
-    else if (currentCO >= g_alarmConfig.coThreshold) {
-        newAlarmState = 1;
-    }
-    /* 检查AI风险报警 */
     else if (predictor.riskLevel >= RISK_DANGER) {
-        newAlarmState = 1;
+        newAlarmLevel = 3;
+        alarmSource = 4;  /* AI预测 */
+        alarmReason = "AI预测高风险";
+    }
+    /* 然后检查传感器阈值报警 */
+    else if (currentTemp >= g_alarmConfig.tempThresholdHigh + 10.0f) {
+        newAlarmLevel = 4;
+        alarmSource = 1;  /* 温度 */
+        alarmReason = "温度严重超标";
+    }
+    else if (currentSmoke >= g_alarmConfig.smokeThreshold + 20.0f) {
+        newAlarmLevel = 4;
+        alarmSource = 2;  /* 烟雾 */
+        alarmReason = "烟雾严重超标";
+    }
+    else if (currentCO >= g_alarmConfig.coThreshold + 50.0f) {
+        newAlarmLevel = 4;
+        alarmSource = 3;  /* CO */
+        alarmReason = "CO严重超标";
+    }
+    else if (currentTemp >= g_alarmConfig.tempThresholdHigh) {
+        newAlarmLevel = 3;
+        alarmSource = 1;  /* 温度 */
+        alarmReason = "温度超标";
+    }
+    else if (currentSmoke >= g_alarmConfig.smokeThreshold) {
+        newAlarmLevel = 3;
+        alarmSource = 2;  /* 烟雾 */
+        alarmReason = "烟雾超标";
+    }
+    else if (currentCO >= g_alarmConfig.coThreshold) {
+        newAlarmLevel = 3;
+        alarmSource = 3;  /* CO */
+        alarmReason = "CO超标";
+    }
+    else if (predictor.riskLevel >= RISK_WARNING) {
+        newAlarmLevel = 2;
+        alarmSource = 4;  /* AI预测 */
+        alarmReason = "AI预测中等风险";
+    }
+    else if (currentTemp >= g_alarmConfig.tempThresholdHigh - 5.0f ||
+             currentSmoke >= g_alarmConfig.smokeThreshold - 10.0f ||
+             currentCO >= g_alarmConfig.coThreshold - 10.0f ||
+             predictor.riskLevel >= RISK_NOTICE) {
+        newAlarmLevel = 1;
+        alarmSource = 0;
+        alarmReason = "接近报警阈值";
     }
 
     /* 状态变化处理 */
-    if (newAlarmState && !alarmState) {
-        alarmState = 1;
-        Send_Alarm_Notification();
-        printf("[ALARM] 报警触发! T:%.1f S:%.0f%% CO:%.0fppm\r\n", 
-               currentTemp, currentSmoke, currentCO);
-    }
-    else if (!newAlarmState && alarmState) {
-        alarmState = 0;
-        printf("[ALARM Cleared] 报警解除\r\n");
+    static uint8_t lastAlarmLevel = 0;
+
+    if (newAlarmLevel != lastAlarmLevel) {
+        lastAlarmLevel = newAlarmLevel;
+        alarmState = (newAlarmLevel >= 2) ? 1 : 0;  /* 级别>=2才触发报警状态 */
+
+        if (newAlarmLevel >= 2) {
+            /* 发送分级报警通知，包含报警来源和风险值 */
+            char alarmMsg[160];
+            sprintf(alarmMsg, "[ALARM:%s:%d] %s T:%.1f S:%.0f%% CO:%.0f Risk:%.2f\r\n",
+                    alarmLevelNames[newAlarmLevel], alarmSource, alarmReason,
+                    currentTemp, currentSmoke, currentCO, predictor.currentRisk);
+            HAL_UART_Transmit(&huart1, (uint8_t*)alarmMsg, strlen(alarmMsg), 100);
+        } else if (newAlarmLevel == 1) {
+            printf("[NOTICE] %s\r\n", alarmReason);
+        } else {
+            printf("[ALARM Cleared] 恢复正常\r\n");
+        }
     }
 
-    /* 蜂鸣器控制（低电平触发）*/
+    /* 蜂鸣器控制 - 根据报警级别调整频率 */
     static uint32_t lastBeep = 0;
     if (alarmState) {
-        /* 蜂鸣器响300ms，停300ms */
-        if (HAL_GetTick() - lastBeep > 300) {
+        uint32_t beepInterval = 0;
+        switch (newAlarmLevel) {
+            case 2: beepInterval = 500; break;   /* 警告: 0.5秒间隔 */
+            case 3: beepInterval = 300; break;   /* 危险: 0.3秒间隔 */
+            case 4: beepInterval = 100; break;   /* 紧急: 0.1秒间隔 */
+            default: beepInterval = 500; break;
+        }
+
+        if (HAL_GetTick() - lastBeep > beepInterval) {
             static uint8_t beepState = 0;
             beepState = !beepState;
             HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, beepState ? GPIO_PIN_RESET : GPIO_PIN_SET);
@@ -329,14 +387,11 @@ void Check_Alarm(void)
 }
 
 /**
- * @brief  发送报警通知到上位机
+ * @brief  发送报警通知到上位机 - 已整合到Check_Alarm
  */
 void Send_Alarm_Notification(void)
 {
-    char alarmMsg[128];
-    sprintf(alarmMsg, "[ALARM] T:%.1f S:%.0f%% CO:%.0fppm Risk:%.2f\r\n",
-            currentTemp, currentSmoke, currentCO, predictor.currentRisk);
-    HAL_UART_Transmit(&huart1, (uint8_t*)alarmMsg, strlen(alarmMsg), 100);
+    /* 此函数已整合到Check_Alarm的分级报警中 */
 }
 
 /**
@@ -344,7 +399,9 @@ void Send_Alarm_Notification(void)
  */
 void Send_Data_To_PC(void)
 {
-    /* 二进制数据帧格式: [0xFF][温度低][温度高][烟雾低][烟雾高][CO低][CO高][风险等级][0xFE] */
+    /* 二进制数据帧格式: [0xFF][温度低][温度高][烟雾低][烟雾高][CO低][CO高][状态字节][0xFE]
+     * 状态字节: 低4位=风险等级(0-4), 高4位=报警级别(0-4)
+     */
     uint8_t data[9] = {0xFF};
 
     /* 温度（乘以10保留1位小数） */
@@ -362,8 +419,11 @@ void Send_Data_To_PC(void)
     data[5] = coInt & 0xFF;
     data[6] = (coInt >> 8) & 0xFF;
 
-    /* 风险等级（0-4） */
-    data[7] = predictor.riskLevel;
+    /* 状态字节: 高4位=报警级别, 低4位=风险等级
+     * 这样上位机可以同时获取两个信息
+     */
+    uint8_t statusByte = (alarmState << 4) | (predictor.riskLevel & 0x0F);
+    data[7] = statusByte;
 
     /* 帧尾 */
     data[8] = 0xFE;
