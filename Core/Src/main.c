@@ -57,6 +57,9 @@ static uint8_t rxComplete = 0;
 /* 报警状态 */
 static uint8_t alarmState = 0;
 
+/* 手动蜂鸣器控制状态 */
+static uint8_t manualBuzzerOn = 0;
+
 /* 函数声明 */
 void SystemClock_Config(void);
 void System_Init(void);
@@ -366,6 +369,15 @@ void Check_Alarm(void)
 
     /* 蜂鸣器控制 - 根据报警级别调整频率 */
     static uint32_t lastBeep = 0;
+    static uint8_t beepState = 0;
+
+    /* 手动蜂鸣器控制优先 */
+    if (manualBuzzerOn) {
+        /* 手动控制模式 - 蜂鸣器持续响 */
+        HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_RESET);
+        return;  /* 直接返回，不执行后面的自动控制 */
+    }
+
     if (alarmState) {
         uint32_t beepInterval = 0;
         switch (newAlarmLevel) {
@@ -376,12 +388,14 @@ void Check_Alarm(void)
         }
 
         if (HAL_GetTick() - lastBeep > beepInterval) {
-            static uint8_t beepState = 0;
             beepState = !beepState;
             HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, beepState ? GPIO_PIN_RESET : GPIO_PIN_SET);
             lastBeep = HAL_GetTick();
         }
     } else {
+        /* 报警解除，确保蜂鸣器关闭并重置状态 */
+        beepState = 0;
+        lastBeep = 0;
         HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
     }
 }
@@ -439,16 +453,33 @@ void ProcessSerialCommand(void)
 {
     if (rxIndex > 0 && (rxBuffer[rxIndex-1] == '\n' || rxBuffer[rxIndex-1] == '\r')) {
         rxBuffer[rxIndex-1] = '\0';
-        
+
         /* 移除可能的回车符 */
         if(rxIndex > 1 && rxBuffer[rxIndex-2] == '\r') {
             rxBuffer[rxIndex-2] = '\0';
         }
-        
+
         printf("[CMD] Received: %s\r\n", rxBuffer);
-        
-        /* 解析命令 */
-        if (AlarmConfig_ParseCommand((char*)rxBuffer)) {
+
+        /* 检查蜂鸣器控制命令 */
+        if (strncmp((char*)rxBuffer, "BUZZER_ON", 9) == 0) {
+            /* 手动开启蜂鸣器 */
+            manualBuzzerOn = 1;
+            HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_RESET);  /* 低电平触发 */
+            printf("[CMD] Buzzer ON (manual)\r\n");
+            char response[] = "[OK] BUZZER_ON\r\n";
+            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+        }
+        else if (strcmp((char*)rxBuffer, "BUZZER_OFF") == 0) {
+            /* 手动关闭蜂鸣器 */
+            manualBuzzerOn = 0;
+            HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);  /* 高电平关闭 */
+            printf("[CMD] Buzzer OFF (manual)\r\n");
+            char response[] = "[OK] BUZZER_OFF\r\n";
+            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+        }
+        /* 解析阈值命令 */
+        else if (AlarmConfig_ParseCommand((char*)rxBuffer)) {
             printf("[CMD] Threshold updated\r\n");
             SendThresholdStatus();
         } else {
@@ -457,6 +488,8 @@ void ProcessSerialCommand(void)
                 SendThresholdStatus();
             } else if (strcmp((char*)rxBuffer, "RESET") == 0) {
                 AlarmConfig_Init();
+                manualBuzzerOn = 0;  /* 重置时关闭手动蜂鸣器 */
+                HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
                 SendThresholdStatus();
             } else {
                 printf("[CMD] Unknown: %s\r\n", rxBuffer);
