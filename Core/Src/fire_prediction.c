@@ -190,17 +190,22 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
   * @param  risk: 风险值 (0-1)
   * @retval 风险等级枚举
   * @note   使用配置的风险阈值进行判断
+  *         风险值 < 阈值 → SAFE/NOTICE（不报警）
+  *         风险值 >= 阈值 → WARNING/DANGER/CRITICAL（报警）
   */
 RiskLevel FirePredictor_GetRiskLevel(float risk)
 {
     /* 使用配置的风险阈值 */
     float riskThreshold = g_alarmConfig.riskThreshold;
 
-    /* 根据配置阈值动态划分等级 */
+    /* 低于阈值时不报警 */
     if (risk < riskThreshold * 0.3f) return RISK_SAFE;
     else if (risk < riskThreshold * 0.6f) return RISK_NOTICE;
-    else if (risk < riskThreshold) return RISK_WARNING;
-    else if (risk < riskThreshold + (1.0f - riskThreshold) * 0.5f) return RISK_DANGER;
+    else if (risk < riskThreshold) return RISK_NOTICE;  /* 接近阈值但仍低于，只是注意级别 */
+
+    /* 达到或超过阈值时才报警 */
+    else if (risk < riskThreshold + (1.0f - riskThreshold) * 0.3f) return RISK_WARNING;
+    else if (risk < riskThreshold + (1.0f - riskThreshold) * 0.6f) return RISK_DANGER;
     else return RISK_CRITICAL;
 }
 
