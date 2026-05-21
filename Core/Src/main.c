@@ -140,6 +140,7 @@ int main(void)
             ProcessSerialCommand();
             rxComplete = 0;
             rxIndex = 0;
+            memset((void*)rxBuffer, 0, RX_BUFFER_SIZE);  /* 清空缓冲区 */
             HAL_UART_Receive_IT(&huart1, &rxBuffer[0], 1);
         }
 
@@ -478,70 +479,73 @@ void Send_Data_To_PC(void)
  */
 void ProcessSerialCommand(void)
 {
-    if (rxIndex > 0 && (rxBuffer[rxIndex-1] == '\n' || rxBuffer[rxIndex-1] == '\r')) {
-        rxBuffer[rxIndex-1] = '\0';
+    /* 换行符已在回调函数中处理 */
+    printf("[CMD] Received: %s (len=%d, rxIndex=%d)\r\n", rxBuffer, strlen((char*)rxBuffer), rxIndex);
 
-        /* 移除可能的回车符 */
-        if(rxIndex > 1 && rxBuffer[rxIndex-2] == '\r') {
-            rxBuffer[rxIndex-2] = '\0';
-        }
+    /* 打印原始十六进制数据用于调试 */
+    printf("[DEBUG] Raw bytes: ");
+    for (int i = 0; i < strlen((char*)rxBuffer); i++) {
+        printf("%02X ", rxBuffer[i]);
+    }
+    printf("\r\n");
 
-        printf("[CMD] Received: %s\r\n", rxBuffer);
+    /* 检查蜂鸣器控制命令 */
+    if (strncmp((char*)rxBuffer, "BUZZER_ON", 9) == 0) {
+        /* 手动开启蜂鸣器 */
+        manualBuzzerOn = 1;
+        printf("[CMD] Buzzer ON command matched, manualBuzzerOn=%d\r\n", manualBuzzerOn);
 
-        /* 检查蜂鸣器控制命令 */
-        if (strncmp((char*)rxBuffer, "BUZZER_ON", 9) == 0) {
-            /* 手动开启蜂鸣器 */
-            manualBuzzerOn = 1;
-            HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_RESET);  /* 低电平触发 */
-            printf("[CMD] Buzzer ON (manual)\r\n");
-            printf("[DEBUG] manualBuzzerOn=%d, GPIO=PBin\r\n", manualBuzzerOn);
-            char response[] = "[OK] BUZZER_ON\r\n";
-            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
-        }
-        else if (strcmp((char*)rxBuffer, "BUZZER_OFF") == 0) {
-            /* 手动关闭蜂鸣器 */
-            manualBuzzerOn = 0;
-            HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);  /* 高电平关闭 */
-            printf("[CMD] Buzzer OFF (manual)\r\n");
-            char response[] = "[OK] BUZZER_OFF\r\n";
-            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
-        }
-        /* 解析阈值命令 */
-        else if (AlarmConfig_ParseCommand((char*)rxBuffer)) {
-            /* 阈值修改后，重置手动蜂鸣器控制，让自动报警逻辑接管 */
-            manualBuzzerOn = 0;
+        /* 立即开启蜂鸣器 */
+        HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_RESET);
 
-            /* 直接重置报警状态，让系统根据新阈值重新评估 */
-            alarmState = 0;
-            lastAlarmLevel = 0;
+        /* 验证 GPIO 状态 */
+        GPIO_PinState pinState = HAL_GPIO_ReadPin(Buzzer_GPIO_Port, Buzzer_Pin);
+        printf("[DEBUG] GPIO state after ON: %d (expect 0)\r\n", pinState);
 
-            /* 立即关闭蜂鸣器 */
+        char response[] = "[OK] BUZZER_ON\r\n";
+        HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+    }
+    else if (strcmp((char*)rxBuffer, "BUZZER_OFF") == 0) {
+        /* 手动关闭蜂鸣器 */
+        manualBuzzerOn = 0;
+        HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+        printf("[CMD] Buzzer OFF (manual)\r\n");
+        char response[] = "[OK] BUZZER_OFF\r\n";
+        HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+    }
+    /* 解析阈值命令 */
+    else if (AlarmConfig_ParseCommand((char*)rxBuffer)) {
+        /* 阈值修改后，重置手动蜂鸣器控制，让自动报警逻辑接管 */
+        manualBuzzerOn = 0;
+
+        /* 直接重置报警状态，让系统根据新阈值重新评估 */
+        alarmState = 0;
+        lastAlarmLevel = 0;
+
+        /* 立即关闭蜂鸣器 */
+        HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+
+        /* 立即更新OLED显示 */
+        Display_Update();
+
+        /* 发送确认响应 */
+        char response[128];
+        sprintf(response, "[OK] Threshold updated! Alarm reset. T:%.0f S:%.0f CO:%.0f\r\n",
+                g_alarmConfig.tempThresholdHigh, g_alarmConfig.smokeThreshold, g_alarmConfig.coThreshold);
+        HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+
+        printf("[CMD] Threshold updated, alarm state reset\r\n");
+    } else {
+        /* 其他命令处理 */
+        if (strcmp((char*)rxBuffer, "STATUS") == 0) {
+            SendThresholdStatus();
+        } else if (strcmp((char*)rxBuffer, "RESET") == 0) {
+            AlarmConfig_Init();
+            manualBuzzerOn = 0;  /* 重置时关闭手动蜂鸣器 */
             HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
-
-            /* 立即更新OLED显示 */
-            Display_Update();
-
-            /* 发送确认响应 */
-            char response[128];
-            sprintf(response, "[OK] Threshold updated! Alarm reset. T:%.0f S:%.0f CO:%.0f\r\n",
-                    g_alarmConfig.tempThresholdHigh, g_alarmConfig.smokeThreshold, g_alarmConfig.coThreshold);
-            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
-
-            printf("[CMD] Threshold updated, alarm state reset\r\n");
-            printf("New thresholds - Temp:%.0f Smoke:%.0f CO:%.0f\r\n",
-                   g_alarmConfig.tempThresholdHigh, g_alarmConfig.smokeThreshold, g_alarmConfig.coThreshold);
+            SendThresholdStatus();
         } else {
-            /* 其他命令处理 */
-            if (strcmp((char*)rxBuffer, "STATUS") == 0) {
-                SendThresholdStatus();
-            } else if (strcmp((char*)rxBuffer, "RESET") == 0) {
-                AlarmConfig_Init();
-                manualBuzzerOn = 0;  /* 重置时关闭手动蜂鸣器 */
-                HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
-                SendThresholdStatus();
-            } else {
-                printf("[CMD] Unknown: %s\r\n", rxBuffer);
-            }
+            printf("[CMD] Unknown: %s\r\n", rxBuffer);
         }
     }
 }
@@ -567,18 +571,35 @@ void SendThresholdStatus(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart == &huart1) {
-        if (rxIndex < RX_BUFFER_SIZE - 1) {
-            rxIndex++;
-            HAL_UART_Receive_IT(&huart1, &rxBuffer[rxIndex], 1);
-        } else {
-            rxIndex = 0;
-            HAL_UART_Receive_IT(&huart1, &rxBuffer[0], 1);
-        }
-        
-        /* 检查是否收到换行符 */
-        if (rxIndex > 0 && (rxBuffer[rxIndex-1] == '\n' || rxBuffer[rxIndex-1] == '\r')) {
+        /* 检查是否收到换行符（命令结束） */
+        if (rxBuffer[rxIndex] == '\n' || rxBuffer[rxIndex] == '\r') {
+            rxBuffer[rxIndex] = '\0';  /* 替换换行符为字符串结束符 */
             rxComplete = 1;
+        } else {
+            /* 先增加索引，准备接收下一个字节 */
+            rxIndex++;
+            if (rxIndex >= RX_BUFFER_SIZE - 1) {
+                printf("[WARN] Buffer overflow, resetting\r\n");
+                rxIndex = 0;  /* 缓冲区溢出保护 */
+                memset((void*)rxBuffer, 0, RX_BUFFER_SIZE);  /* 清空缓冲区 */
+            }
+            /* 重新启动接收，存储到新位置 */
+            HAL_UART_Receive_IT(&huart1, &rxBuffer[rxIndex], 1);
         }
+    }
+}
+
+/**
+ * @brief  UART错误回调函数
+ */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+    if (huart == &huart1) {
+        printf("[UART ERROR] ErrorCode: 0x%X\r\n", (unsigned int)huart->ErrorCode);
+        /* 重新启动接收 */
+        rxIndex = 0;
+        memset((void*)rxBuffer, 0, RX_BUFFER_SIZE);
+        HAL_UART_Receive_IT(&huart1, &rxBuffer[0], 1);
     }
 }
 
