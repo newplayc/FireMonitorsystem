@@ -1,6 +1,6 @@
 firemonitorsystem/fire_prediction.o: ..\Core\Src\fire_prediction.c \
   ..\Core\Inc\fire_prediction.h E:\keil\ARM\ARMCLANG\include\stdint.h \
-  E:\keil\ARM\ARMCLANG\include\stdbool.h \
+  E:\keil\ARM\ARMCLANG\include\stdbool.h ..\Core\Inc\alarm_config.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h \
   ..\Core\Inc\stm32f1xx_hal_conf.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h \

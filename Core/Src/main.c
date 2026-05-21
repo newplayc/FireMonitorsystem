@@ -57,6 +57,9 @@ static uint8_t rxComplete = 0;
 /* 报警状态 */
 static uint8_t alarmState = 0;
 
+/* 上一次报警级别（用于检测状态变化） */
+static uint8_t lastAlarmLevel = 0;
+
 /* 手动蜂鸣器控制状态 */
 static uint8_t manualBuzzerOn = 0;
 
@@ -195,6 +198,8 @@ void System_Init(void)
 
 /**
  * @brief  读取传感器数据
+ * @note   MQ-2 烟雾传感器和 MQ-7 CO 传感器在正常空气中都有基础输出
+ *         需要减去基础值进行校准
  */
 void Sensors_Read(void)
 {
@@ -217,18 +222,41 @@ void Sensors_Read(void)
 
     /* 读取烟雾和CO（从DMA缓冲区） */
     if (adc_dma_buffer[0] != 0 || adc_dma_buffer[1] != 0) {
-        /* 烟雾传感器 - PA6 (ADC1_IN6) */
-        currentSmoke = (float)adc_dma_buffer[0] * 100.0f / 4095.0f;
-        if(currentSmoke > 100) currentSmoke = 100;
-        
-        /* CO传感器 - PA2 (ADC1_IN2) */
-        currentCO = (float)adc_dma_buffer[1] * 1000.0f / 4095.0f;
-        
-        /* 减少调试输出 */
+        /*
+         * MQ-2 烟雾传感器校准:
+         * - 正常空气中显示 2-5%
+         */
+        #define SMOKE_ADC_BASE      1750.0f
+        #define SMOKE_ADC_MAX       4095.0f
+
+        float smokeAdc = (float)adc_dma_buffer[0];
+        if (smokeAdc <= SMOKE_ADC_BASE) {
+            currentSmoke = 0.0f;
+        } else {
+            currentSmoke = (smokeAdc - SMOKE_ADC_BASE) * 100.0f / (SMOKE_ADC_MAX - SMOKE_ADC_BASE);
+            if(currentSmoke > 100.0f) currentSmoke = 100.0f;
+        }
+
+        /*
+         * MQ-7 CO 传感器校准:
+         * - 正常空气中显示约 9 ppm
+         */
+        #define CO_ADC_BASE         1400.0f
+        #define CO_ADC_MAX          4095.0f
+
+        float coAdc = (float)adc_dma_buffer[1];
+        if (coAdc <= CO_ADC_BASE) {
+            currentCO = 0.0f;
+        } else {
+            currentCO = (coAdc - CO_ADC_BASE) * 1000.0f / (CO_ADC_MAX - CO_ADC_BASE);
+            if(currentCO > 1000.0f) currentCO = 1000.0f;
+        }
+
+        /* 输出调试信息 */
         static uint32_t lastPrint = 0;
         if(HAL_GetTick() - lastPrint > 3000) {
-            printf("ADC: Smoke=%d(%.0f%%) CO=%d(%.0fppm)\r\n", 
-                   adc_dma_buffer[0], currentSmoke, adc_dma_buffer[1], currentCO);
+            printf("ADC: Smoke=%d CO=%d -> %.1f%% %.1fppm\r\n",
+                   adc_dma_buffer[0], adc_dma_buffer[1], currentSmoke, currentCO);
             lastPrint = HAL_GetTick();
         }
     }
@@ -346,8 +374,7 @@ void Check_Alarm(void)
         alarmReason = "接近报警阈值";
     }
 
-    /* 状态变化处理 */
-    static uint8_t lastAlarmLevel = 0;
+    /* 状态变化处理 - lastAlarmLevel 现在是文件级静态变量 */
 
     if (newAlarmLevel != lastAlarmLevel) {
         lastAlarmLevel = newAlarmLevel;
@@ -467,6 +494,7 @@ void ProcessSerialCommand(void)
             manualBuzzerOn = 1;
             HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_RESET);  /* 低电平触发 */
             printf("[CMD] Buzzer ON (manual)\r\n");
+            printf("[DEBUG] manualBuzzerOn=%d, GPIO=PBin\r\n", manualBuzzerOn);
             char response[] = "[OK] BUZZER_ON\r\n";
             HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
         }
@@ -480,8 +508,28 @@ void ProcessSerialCommand(void)
         }
         /* 解析阈值命令 */
         else if (AlarmConfig_ParseCommand((char*)rxBuffer)) {
-            printf("[CMD] Threshold updated\r\n");
-            SendThresholdStatus();
+            /* 阈值修改后，重置手动蜂鸣器控制，让自动报警逻辑接管 */
+            manualBuzzerOn = 0;
+
+            /* 直接重置报警状态，让系统根据新阈值重新评估 */
+            alarmState = 0;
+            lastAlarmLevel = 0;
+
+            /* 立即关闭蜂鸣器 */
+            HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin, GPIO_PIN_SET);
+
+            /* 立即更新OLED显示 */
+            Display_Update();
+
+            /* 发送确认响应 */
+            char response[128];
+            sprintf(response, "[OK] Threshold updated! Alarm reset. T:%.0f S:%.0f CO:%.0f\r\n",
+                    g_alarmConfig.tempThresholdHigh, g_alarmConfig.smokeThreshold, g_alarmConfig.coThreshold);
+            HAL_UART_Transmit(&huart1, (uint8_t*)response, strlen(response), 100);
+
+            printf("[CMD] Threshold updated, alarm state reset\r\n");
+            printf("New thresholds - Temp:%.0f Smoke:%.0f CO:%.0f\r\n",
+                   g_alarmConfig.tempThresholdHigh, g_alarmConfig.smokeThreshold, g_alarmConfig.coThreshold);
         } else {
             /* 其他命令处理 */
             if (strcmp((char*)rxBuffer, "STATUS") == 0) {

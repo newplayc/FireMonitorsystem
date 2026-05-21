@@ -23,13 +23,13 @@
 #define DEFAULT_TEMP_THRESHOLD_LOW      5.0f    /* 低温报警阈值（可选） */
 
 /* 烟雾阈值 (百分比 0-100%) */
-#define DEFAULT_SMOKE_THRESHOLD         30.0f   /* 烟雾浓度报警阈值 */
+#define DEFAULT_SMOKE_THRESHOLD         50.0f   /* 烟雾浓度报警阈值 */
 
 /* CO阈值 (ppm) */
-#define DEFAULT_CO_THRESHOLD            50.0f   /* CO浓度报警阈值 */
+#define DEFAULT_CO_THRESHOLD            500.0f   /* CO浓度报警阈值 */
 
 /* 风险值阈值 (0-1，用于AI预测算法) */
-#define DEFAULT_RISK_THRESHOLD          0.6f    /* 风险等级达到DANGER时报警 */
+#define DEFAULT_RISK_THRESHOLD          0.7f    /* 风险等级达到DANGER时报警 */
 
 /* ============================================================================
  * 阈值结构体 - 运行时可修改

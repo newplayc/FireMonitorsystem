@@ -9,7 +9,8 @@
   */
 
 #include "fire_prediction.h"
-#include "stm32f1xx_hal.h"  /* 修复：添加HAL库头文件 */
+#include "alarm_config.h"  /* 使用统一的阈值配置 */
+#include "stm32f1xx_hal.h"
 #include <math.h>
 #include <string.h>
 
@@ -108,38 +109,28 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
 
     float tempRisk = 0.0f, smokeRisk = 0.0f, coRisk = 0.0f, trendRisk = 0.0f;
 
+    /* 使用统一配置的阈值 */
+    float tempThreshold = g_alarmConfig.tempThresholdHigh;
+    float smokeThreshold = g_alarmConfig.smokeThreshold;
+    float coThreshold = g_alarmConfig.coThreshold;
+
     /*
      * ====== 因素1: 温度风险 (权重20%) ======
-     * 阈值: 40°C (当温度=40°C时，风险=0.5)
-     * 斜率: k=0.3 (控制过渡陡峭程度)
-     * 数学推导:
-     *   - 30°C时: exp(-0.3*(30-40)) = exp(3) ≈ 20, risk ≈ 0.05
-     *   - 40°C时: exp(-0.3*(40-40)) = exp(0) = 1, risk = 0.5
-     *   - 50°C时: exp(-0.3*(50-40)) = exp(-3) ≈ 0.05, risk ≈ 0.95
+     * 使用配置的温度阈值
      */
-    tempRisk = 1.0f / (1.0f + expf(-0.3f * (current->temperature - 40.0f)));
+    tempRisk = 1.0f / (1.0f + expf(-0.3f * (current->temperature - tempThreshold)));
 
     /*
      * ====== 因素2: 烟雾风险 (权重35%) ======
-     * 阈值: 30% (当烟雾=30%时，风险=0.5)
-     * 斜率: k=0.2
-     * 数学推导:
-     *   - 10%时: exp(-0.2*(10-30)) = exp(4) ≈ 54.6, risk ≈ 0.02
-     *   - 30%时: exp(0) = 1, risk = 0.5
-     *   - 50%时: exp(-0.2*(50-30)) = exp(-4) ≈ 0.018, risk ≈ 0.98
+     * 使用配置的烟雾阈值
      */
-    smokeRisk = 1.0f / (1.0f + expf(-0.2f * (current->smoke - 30.0f)));
+    smokeRisk = 1.0f / (1.0f + expf(-0.2f * (current->smoke - smokeThreshold)));
 
     /*
      * ====== 因素3: CO风险 (权重25%) ======
-     * 阈值: 50 ppm (当CO=50ppm时，风险=0.5)
-     * 斜率: k=0.1
-     * 数学推导:
-     *   - 30ppm时: exp(-0.1*(30-50)) = exp(2) ≈ 7.4, risk ≈ 0.12
-     *   - 50ppm时: exp(0) = 1, risk = 0.5
-     *   - 100ppm时: exp(-0.1*(100-50)) = exp(-5) ≈ 0.007, risk ≈ 0.99
+     * 使用配置的CO阈值
      */
-    coRisk = 1.0f / (1.0f + expf(-0.1f * (current->co - 50.0f)));
+    coRisk = 1.0f / (1.0f + expf(-0.1f * (current->co - coThreshold)));
 
     /*
      * ====== 因素4: 温度趋势风险 (权重20%) ======
@@ -170,22 +161,20 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
     /*
      * ====== 多因素相关性修正 (防误报) ======
      * 如果仅温度高但烟雾和CO正常，可能是加热器等误报
-     * 条件: 温度>45°C 且 烟雾<10% 且 CO<30ppm
      */
-    if (current->temperature > 45.0f &&
-        current->smoke < 10.0f &&
-        current->co < 30.0f) {
+    if (current->temperature > tempThreshold + 5.0f &&
+        current->smoke < smokeThreshold * 0.2f &&
+        current->co < coThreshold * 0.1f) {
         totalRisk *= 0.4f;  /* 显著降低风险 */
     }
 
     /*
      * ====== 多因素联动增强 ======
      * 如果多个指标同时异常，增加风险权重
-     * 条件: 温度>40°C 且 烟雾>20% 且 CO>40ppm
      */
-    if (current->temperature > 40.0f &&
-        current->smoke > 20.0f &&
-        current->co > 40.0f) {
+    if (current->temperature > tempThreshold &&
+        current->smoke > smokeThreshold * 0.4f &&
+        current->co > coThreshold * 0.08f) {
         totalRisk *= 1.3f;  /* 增加30%风险 */
     }
 
@@ -200,13 +189,18 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
   * @brief  获取风险等级
   * @param  risk: 风险值 (0-1)
   * @retval 风险等级枚举
+  * @note   使用配置的风险阈值进行判断
   */
 RiskLevel FirePredictor_GetRiskLevel(float risk)
 {
-    if (risk < 0.2f) return RISK_SAFE;
-    else if (risk < 0.4f) return RISK_NOTICE;
-    else if (risk < 0.6f) return RISK_WARNING;
-    else if (risk < 0.8f) return RISK_DANGER;
+    /* 使用配置的风险阈值 */
+    float riskThreshold = g_alarmConfig.riskThreshold;
+
+    /* 根据配置阈值动态划分等级 */
+    if (risk < riskThreshold * 0.3f) return RISK_SAFE;
+    else if (risk < riskThreshold * 0.6f) return RISK_NOTICE;
+    else if (risk < riskThreshold) return RISK_WARNING;
+    else if (risk < riskThreshold + (1.0f - riskThreshold) * 0.5f) return RISK_DANGER;
     else return RISK_CRITICAL;
 }
 

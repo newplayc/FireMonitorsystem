@@ -3,7 +3,7 @@
 <title>Static Call Graph - [FireMonitorsystem\FireMonitorsystem.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image FireMonitorsystem\FireMonitorsystem.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Wed May 13 13:36:43 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Thu May 21 13:44:57 2026
 <BR><P>
 <H3>Maximum Stack Usage =        528 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -302,9 +302,11 @@ Global Symbols
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_float_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Alarm
-<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
+<LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sensors_Read
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_AnalyzeTrend
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
+<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_frsub
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;expf
 </UL>
@@ -315,6 +317,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_AnalyzeTrend
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
+<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;expf
 </UL>
 
@@ -333,6 +337,7 @@ Global Symbols
 <LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_AnalyzeTrend
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
+<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;expf
 </UL>
 
@@ -384,6 +389,7 @@ Global Symbols
 
 <P><STRONG><a name="[74]"></a>__aeabi_fcmple</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, fcmple.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Update
+<LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sensors_Read
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_ParseCommand
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
@@ -393,7 +399,6 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Alarm
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_ParseCommand
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
-<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
 </UL>
 
 <P><STRONG><a name="[77]"></a>__aeabi_fcmpge</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, fcmpge.o(.text))
@@ -404,10 +409,10 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[75]"></a>__aeabi_fcmpgt</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, fcmpgt.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Sensors_Read
-<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_ParseCommand
+<BR><BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_ParseCommand
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_AnalyzeTrend
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
+<LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_Update
 </UL>
 
 <P><STRONG><a name="[55]"></a>__aeabi_i2f</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, fflti.o(.text))
@@ -792,7 +797,8 @@ Global Symbols
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessSerialCommand
+<LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
 <P><STRONG><a name="[8d]"></a>Error_Handler</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, main.o(.text.Error_Handler))
@@ -810,8 +816,8 @@ Global Symbols
 <P><STRONG><a name="[8f]"></a>FirePredictor_AnalyzeTrend</STRONG> (Thumb, 1576 bytes, Stack size 160 bytes, fire_prediction.o(.text.FirePredictor_AnalyzeTrend))
 <BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = FirePredictor_AnalyzeTrend &rArr; __aeabi_fsub &rArr; __aeabi_fadd &rArr; _float_epilogue
 </UL>
-<BR>[Calls]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
-<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
+<BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmpgt
@@ -819,12 +825,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
 </UL>
 
-<P><STRONG><a name="[91]"></a>FirePredictor_CalculateRisk</STRONG> (Thumb, 522 bytes, Stack size 64 bytes, fire_prediction.o(.text.FirePredictor_CalculateRisk))
-<BR><BR>[Stack]<UL><LI>Max Depth = 244<LI>Call Chain = FirePredictor_CalculateRisk &rArr; FirePredictor_AnalyzeTrend &rArr; __aeabi_fsub &rArr; __aeabi_fadd &rArr; _float_epilogue
+<P><STRONG><a name="[91]"></a>FirePredictor_CalculateRisk</STRONG> (Thumb, 588 bytes, Stack size 72 bytes, fire_prediction.o(.text.FirePredictor_CalculateRisk))
+<BR><BR>[Stack]<UL><LI>Max Depth = 252<LI>Call Chain = FirePredictor_CalculateRisk &rArr; FirePredictor_AnalyzeTrend &rArr; __aeabi_fsub &rArr; __aeabi_fadd &rArr; _float_epilogue
 </UL>
-<BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
+<BR>[Calls]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmplt
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 <LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_AnalyzeTrend
-<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmplt
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmpge
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmple
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -843,14 +850,17 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;System_Init
 </UL>
 
-<P><STRONG><a name="[95]"></a>FirePredictor_Update</STRONG> (Thumb, 258 bytes, Stack size 24 bytes, fire_prediction.o(.text.FirePredictor_Update))
-<BR><BR>[Stack]<UL><LI>Max Depth = 268<LI>Call Chain = FirePredictor_Update &rArr; FirePredictor_CalculateRisk &rArr; FirePredictor_AnalyzeTrend &rArr; __aeabi_fsub &rArr; __aeabi_fadd &rArr; _float_epilogue
+<P><STRONG><a name="[95]"></a>FirePredictor_Update</STRONG> (Thumb, 286 bytes, Stack size 24 bytes, fire_prediction.o(.text.FirePredictor_Update))
+<BR><BR>[Stack]<UL><LI>Max Depth = 276<LI>Call Chain = FirePredictor_Update &rArr; FirePredictor_CalculateRisk &rArr; FirePredictor_AnalyzeTrend &rArr; __aeabi_fsub &rArr; __aeabi_fadd &rArr; _float_epilogue
 </UL>
-<BR>[Calls]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmplt
+<BR>[Calls]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fsub
 <LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmpge
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmple
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FirePredictor_CalculateRisk
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmpgt
 </UL>
 <BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -1361,10 +1371,11 @@ Global Symbols
 <P><STRONG><a name="[8]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f1xx_it.o(.text.PendSV_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103xb.o(RESET)
 </UL>
-<P><STRONG><a name="[c3]"></a>ProcessSerialCommand</STRONG> (Thumb, 448 bytes, Stack size 192 bytes, main.o(.text.ProcessSerialCommand))
+<P><STRONG><a name="[c3]"></a>ProcessSerialCommand</STRONG> (Thumb, 660 bytes, Stack size 192 bytes, main.o(.text.ProcessSerialCommand))
 <BR><BR>[Stack]<UL><LI>Max Depth = 512<LI>Call Chain = ProcessSerialCommand &rArr; AlarmConfig_ParseCommand &rArr; atof &rArr; __strtod_int &rArr; _local_sscanf &rArr; _scanf_real
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Update
 <LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_ParseCommand
 <LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AlarmConfig_Init
@@ -1391,17 +1402,18 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;System_Init
 </UL>
 
-<P><STRONG><a name="[c6]"></a>Sensors_Read</STRONG> (Thumb, 252 bytes, Stack size 48 bytes, main.o(.text.Sensors_Read))
+<P><STRONG><a name="[c6]"></a>Sensors_Read</STRONG> (Thumb, 356 bytes, Stack size 48 bytes, main.o(.text.Sensors_Read))
 <BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = Sensors_Read &rArr; DS18B20_Get_Temperature &rArr; DS18B20_Read_Bit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmple
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DS18B20_Get_Temperature
+<LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
 <LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fcmpgt
 <LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
