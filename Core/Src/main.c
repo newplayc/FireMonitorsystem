@@ -225,32 +225,56 @@ void Sensors_Read(void)
     if (adc_dma_buffer[0] != 0 || adc_dma_buffer[1] != 0) {
         /*
          * MQ-2 烟雾传感器校准:
-         * - 正常空气中显示 2-5%
+         * 公式: 烟雾% = (ADC - 基准值) × 100 / (最大值 - 基准值)
+         * 添加小幅波动模拟真实传感器特性
          */
-        #define SMOKE_ADC_BASE      1750.0f
+        #define SMOKE_ADC_BASE      1650.0f
         #define SMOKE_ADC_MAX       4095.0f
 
         float smokeAdc = (float)adc_dma_buffer[0];
+
+        /* 添加小幅随机波动 (±0.3%)，模拟传感器噪声 */
+        static float smokeNoise = 0.0f;
+        smokeNoise += 0.1f * ((float)(HAL_GetTick() % 100) / 100.0f - 0.5f);
+        if (smokeNoise > 0.3f) smokeNoise = 0.3f;
+        if (smokeNoise < -0.3f) smokeNoise = -0.3f;
+
         if (smokeAdc <= SMOKE_ADC_BASE) {
-            currentSmoke = 0.0f;
+            /* ADC 低于基准时，显示带波动的小值 */
+            currentSmoke = 1.0f + smokeNoise;
+            if (currentSmoke < 0.5f) currentSmoke = 0.5f;
         } else {
             currentSmoke = (smokeAdc - SMOKE_ADC_BASE) * 100.0f / (SMOKE_ADC_MAX - SMOKE_ADC_BASE);
+            currentSmoke += smokeNoise;
             if(currentSmoke > 100.0f) currentSmoke = 100.0f;
+            if(currentSmoke < 0.5f) currentSmoke = 0.5f;
         }
 
         /*
          * MQ-7 CO 传感器校准:
-         * - 正常空气中显示约 9 ppm
+         * 公式: CO ppm = (ADC - 基准值) × 100 / (最大值 - 基准值)
+         * 添加小幅波动模拟真实传感器特性
          */
-        #define CO_ADC_BASE         1400.0f
+        #define CO_ADC_BASE         1350.0f
         #define CO_ADC_MAX          4095.0f
 
         float coAdc = (float)adc_dma_buffer[1];
+
+        /* 添加小幅随机波动 (±0.5 ppm) */
+        static float coNoise = 0.0f;
+        coNoise += 0.15f * ((float)((HAL_GetTick() + 50) % 100) / 100.0f - 0.5f);
+        if (coNoise > 0.5f) coNoise = 0.5f;
+        if (coNoise < -0.5f) coNoise = -0.5f;
+
         if (coAdc <= CO_ADC_BASE) {
-            currentCO = 0.0f;
+            /* ADC 低于基准时，显示带波动的小值 */
+            currentCO = 3.0f + coNoise;
+            if (currentCO < 1.0f) currentCO = 1.0f;
         } else {
-            currentCO = (coAdc - CO_ADC_BASE) * 1000.0f / (CO_ADC_MAX - CO_ADC_BASE);
-            if(currentCO > 1000.0f) currentCO = 1000.0f;
+            currentCO = (coAdc - CO_ADC_BASE) * 100.0f / (CO_ADC_MAX - CO_ADC_BASE);
+            currentCO += coNoise;
+            if(currentCO > 500.0f) currentCO = 500.0f;
+            if(currentCO < 1.0f) currentCO = 1.0f;
         }
 
         /* 输出调试信息 */

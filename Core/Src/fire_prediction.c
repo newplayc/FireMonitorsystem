@@ -13,6 +13,7 @@
 #include "stm32f1xx_hal.h"
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 /**
   * @brief  初始化火灾预测器
@@ -114,49 +115,61 @@ float FirePredictor_CalculateRisk(FirePredictor* predictor)
     float smokeThreshold = g_alarmConfig.smokeThreshold;
     float coThreshold = g_alarmConfig.coThreshold;
 
+    /* 调试输出 */
+    static uint32_t lastDebug = 0;
+    if (HAL_GetTick() - lastDebug > 5000) {
+        printf("[RISK DEBUG] T:%.1f/%.0f S:%.1f/%.0f CO:%.1f/%.0f\r\n",
+               current->temperature, tempThreshold,
+               current->smoke, smokeThreshold,
+               current->co, coThreshold);
+        lastDebug = HAL_GetTick();
+    }
+
     /*
      * ====== 因素1: 温度风险 (权重20%) ======
-     * 使用配置的温度阈值
      */
     tempRisk = 1.0f / (1.0f + expf(-0.3f * (current->temperature - tempThreshold)));
 
     /*
      * ====== 因素2: 烟雾风险 (权重35%) ======
-     * 使用配置的烟雾阈值
      */
     smokeRisk = 1.0f / (1.0f + expf(-0.2f * (current->smoke - smokeThreshold)));
 
     /*
      * ====== 因素3: CO风险 (权重25%) ======
-     * 使用配置的CO阈值
      */
     coRisk = 1.0f / (1.0f + expf(-0.1f * (current->co - coThreshold)));
 
     /*
      * ====== 因素4: 温度趋势风险 (权重20%) ======
-     * 阈值: 2°C/s (快速升温)
-     * 斜率: k=2.0 (更陡峭，因为快速升温是强信号)
-     * 数学推导:
-     *   - 0.5°C/s: exp(-2*(0.5-2)) = exp(3) ≈ 20, risk ≈ 0.05
-     *   - 2°C/s: exp(0) = 1, risk = 0.5
-     *   - 5°C/s: exp(-2*(5-2)) = exp(-6) ≈ 0.002, risk ≈ 0.998
      */
     float tempRate = trend.tempTrend;
-    if (tempRate < 0) tempRate = 0;  /* 降温不计风险 */
+    if (tempRate < 0) tempRate = 0;
     trendRisk = 1.0f / (1.0f + expf(-2.0f * (tempRate - 2.0f)));
 
     /*
      * ====== 综合风险计算 ======
-     * 权重分配:
-     *   - 烟雾: 35% (最直接火灾指标)
-     *   - CO:   25% (燃烧产物)
-     *   - 温度: 20% (环境温度)
-     *   - 趋势: 20% (变化速率)
+     * 策略：加权平均 + 最大风险增强
+     * 如果任何单项风险很高，综合风险也应该很高
      */
-    float totalRisk = 0.20f * tempRisk +
-                      0.35f * smokeRisk +
-                      0.25f * coRisk +
-                      0.20f * trendRisk;
+    float maxRisk = tempRisk;
+    if (smokeRisk > maxRisk) maxRisk = smokeRisk;
+    if (coRisk > maxRisk) maxRisk = coRisk;
+    if (trendRisk > maxRisk) maxRisk = trendRisk;
+
+    float weightedRisk = 0.20f * tempRisk +
+                         0.35f * smokeRisk +
+                         0.25f * coRisk +
+                         0.20f * trendRisk;
+
+    /* 综合风险 = 加权平均(60%) + 最大风险(40%) */
+    float totalRisk = 0.6f * weightedRisk + 0.4f * maxRisk;
+
+    /* 调试输出各项风险 */
+    if (HAL_GetTick() - lastDebug < 100) {
+        printf("[RISK] tempR=%.2f smokeR=%.2f coR=%.2f trendR=%.2f max=%.2f total=%.2f\r\n",
+               tempRisk, smokeRisk, coRisk, trendRisk, maxRisk, totalRisk);
+    }
 
     /*
      * ====== 多因素相关性修正 (防误报) ======

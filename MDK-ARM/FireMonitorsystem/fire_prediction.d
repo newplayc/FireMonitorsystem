@@ -30,4 +30,5 @@ firemonitorsystem/fire_prediction.o: ..\Core\Src\fire_prediction.c \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
   E:\keil\ARM\ARMCLANG\include\math.h \
-  E:\keil\ARM\ARMCLANG\include\string.h
+  E:\keil\ARM\ARMCLANG\include\string.h \
+  E:\keil\ARM\ARMCLANG\include\stdio.h
