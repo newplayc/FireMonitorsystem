@@ -224,15 +224,27 @@ void Sensors_Read(void)
     /* 读取烟雾和CO（从DMA缓冲区） */
     if (adc_dma_buffer[0] != 0 || adc_dma_buffer[1] != 0) {
         /*
+         * 利用 ADC 最低位的自然噪声产生随机波动
+         * ADC 最低 2-3 位通常有 ±1-2 的随机抖动
+         */
+        int16_t noise1 = (int16_t)(adc_dma_buffer[0] & 0x03);  /* 取最低2位: 0-3 */
+        int16_t noise2 = (int16_t)(adc_dma_buffer[1] & 0x03);
+        float randomSmoke = (float)(noise1 - 1.5f) * 0.8f;  /* -1.2 到 +1.2 */
+        float randomCO = (float)(noise2 - 1.5f) * 1.5f;     /* -2.25 到 +2.25 */
+
+        /*
          * MQ-2 烟雾传感器校准
          * 基准值: 空气良好时 ADC ≈ 1700
+         * 波动范围: 1% - 4%
          */
         float smokeAdc = (float)adc_dma_buffer[0];
         float smokeBase = 1650.0f;
 
         if (smokeAdc <= smokeBase) {
-            /* 低于基准时显示 1-2% 的小值 */
-            currentSmoke = 1.5f;
+            /* 空气良好时显示 1-4% 自然波动 */
+            currentSmoke = 2.5f + randomSmoke;
+            if (currentSmoke < 1.0f) currentSmoke = 1.0f;
+            if (currentSmoke > 4.0f) currentSmoke = 4.0f;
         } else {
             currentSmoke = (smokeAdc - smokeBase) * 100.0f / (4095.0f - smokeBase);
             if(currentSmoke > 100.0f) currentSmoke = 100.0f;
@@ -241,13 +253,16 @@ void Sensors_Read(void)
         /*
          * MQ-7 CO 传感器校准
          * 基准值: 空气良好时 ADC ≈ 1500
+         * 波动范围: 2-9 ppm
          */
         float coAdc = (float)adc_dma_buffer[1];
         float coBase = 1400.0f;
 
         if (coAdc <= coBase) {
-            /* 低于基准时显示 3-5 ppm 的小值 */
-            currentCO = 4.0f;
+            /* 空气良好时显示 2-9 ppm 自然波动 */
+            currentCO = 5.5f + randomCO;
+            if (currentCO < 2.0f) currentCO = 2.0f;
+            if (currentCO > 9.0f) currentCO = 9.0f;
         } else {
             currentCO = (coAdc - coBase) * 100.0f / (4095.0f - coBase);
             if(currentCO > 500.0f) currentCO = 500.0f;

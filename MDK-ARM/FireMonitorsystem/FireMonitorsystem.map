@@ -448,6 +448,8 @@ Section Cross References
     main.o(.text.Sensors_Read) refers to ffltui.o(.text) for __aeabi_ui2f
     main.o(.text.Sensors_Read) refers to fadd.o(.text) for __aeabi_fadd
     main.o(.text.Sensors_Read) refers to fmul.o(.text) for __aeabi_fmul
+    main.o(.text.Sensors_Read) refers to fcmplt.o(.text) for __aeabi_fcmplt
+    main.o(.text.Sensors_Read) refers to fcmpgt.o(.text) for __aeabi_fcmpgt
     main.o(.text.Sensors_Read) refers to fcmple.o(.text) for __aeabi_fcmple
     main.o(.ARM.exidx.text.Sensors_Read) refers to main.o(.text.Sensors_Read) for [Anonymous Symbol]
     main.o(.text.Display_Update) refers to main.o(.bss..L_MergedGlobals) for .L_MergedGlobals
@@ -2345,83 +2347,83 @@ Image Symbol Table
     [Anonymous Symbol]                       0x08006038   Section        0  stm32f1xx_it.o(.text.SVC_Handler)
     [Anonymous Symbol]                       0x0800603c   Section        0  sensors.o(.text.Sensors_Init)
     [Anonymous Symbol]                       0x0800605c   Section        0  main.o(.text.Sensors_Read)
-    [Anonymous Symbol]                       0x08006228   Section        0  stm32f1xx_it.o(.text.SysTick_Handler)
-    [Anonymous Symbol]                       0x0800622c   Section        0  main.o(.text.SystemClock_Config)
-    [Anonymous Symbol]                       0x08006310   Section        0  system_stm32f1xx.o(.text.SystemInit)
-    [Anonymous Symbol]                       0x08006314   Section        0  main.o(.text.System_Init)
-    UART_DMAAbortOnError                     0x080064a5   Thumb Code    12  stm32f1xx_hal_uart.o(.text.UART_DMAAbortOnError)
-    [Anonymous Symbol]                       0x080064a4   Section        0  stm32f1xx_hal_uart.o(.text.UART_DMAAbortOnError)
-    UART_Receive_IT                          0x080064b1   Thumb Code   254  stm32f1xx_hal_uart.o(.text.UART_Receive_IT)
-    [Anonymous Symbol]                       0x080064b0   Section        0  stm32f1xx_hal_uart.o(.text.UART_Receive_IT)
-    [Anonymous Symbol]                       0x080065b0   Section        0  stm32f1xx_it.o(.text.USART1_IRQHandler)
-    [Anonymous Symbol]                       0x080065bc   Section        0  stm32f1xx_it.o(.text.UsageFault_Handler)
-    [Anonymous Symbol]                       0x080065c0   Section        0  main.o(.text.fputc)
-    [Anonymous Symbol]                       0x080065e0   Section        0  main.o(.text.main)
-    i.__0printf                              0x080067bc   Section        0  printfa.o(i.__0printf)
-    i.__0sprintf                             0x080067dc   Section        0  printfa.o(i.__0sprintf)
-    i.__ARM_fpclassifyf                      0x08006804   Section        0  fpclassifyf.o(i.__ARM_fpclassifyf)
-    i.__mathlib_flt_infnan                   0x0800682a   Section        0  funder.o(i.__mathlib_flt_infnan)
-    i.__mathlib_flt_overflow                 0x08006830   Section        0  funder.o(i.__mathlib_flt_overflow)
-    i.__mathlib_flt_underflow                0x0800683a   Section        0  funder.o(i.__mathlib_flt_underflow)
-    i.__read_errno                           0x08006844   Section        0  errno.o(i.__read_errno)
-    i.__scatterload_copy                     0x08006850   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x0800685e   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x08006860   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i.__set_errno                            0x08006870   Section        0  errno.o(i.__set_errno)
-    _fp_digits                               0x0800687d   Thumb Code   366  printfa.o(i._fp_digits)
-    i._fp_digits                             0x0800687c   Section        0  printfa.o(i._fp_digits)
-    i._is_digit                              0x08006a00   Section        0  scanf_fp.o(i._is_digit)
-    _printf_core                             0x08006a11   Thumb Code  1744  printfa.o(i._printf_core)
-    i._printf_core                           0x08006a10   Section        0  printfa.o(i._printf_core)
-    _printf_post_padding                     0x080070ed   Thumb Code    36  printfa.o(i._printf_post_padding)
-    i._printf_post_padding                   0x080070ec   Section        0  printfa.o(i._printf_post_padding)
-    _printf_pre_padding                      0x08007111   Thumb Code    46  printfa.o(i._printf_pre_padding)
-    i._printf_pre_padding                    0x08007110   Section        0  printfa.o(i._printf_pre_padding)
-    _sputc                                   0x0800713f   Thumb Code    10  printfa.o(i._sputc)
-    i._sputc                                 0x0800713e   Section        0  printfa.o(i._sputc)
-    i.atof                                   0x08007148   Section        0  atof.o(i.atof)
-    i.expf                                   0x08007174   Section        0  expf.o(i.expf)
-    i.puts                                   0x080072e8   Section        0  puts.o(i.puts)
-    twotokover4top                           0x0800730c   Data          16  expf.o(.constdata)
-    .constdata                               0x0800730c   Section       48  expf.o(.constdata)
-    twotokover4bot                           0x0800731c   Data          16  expf.o(.constdata)
-    twotokover4all                           0x0800732c   Data          16  expf.o(.constdata)
-    .constdata                               0x0800733c   Section       64  ctype_c.o(.constdata)
-    .L__const.Check_Alarm.alarmLevelNames    0x0800737c   Data          20  main.o(.rodata..L__const.Check_Alarm.alarmLevelNames)
-    .L__const.ProcessSerialCommand.response  0x08007390   Data          20  main.o(.rodata..L__const.ProcessSerialCommand.response)
-    HAL_RCC_GetSysClockFreq.aPredivFactorTable 0x080073bc   Data           2  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
-    [Anonymous Symbol]                       0x080073bc   Section        0  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
-    HAL_RCC_GetSysClockFreq.aPLLMULFactorTable 0x08007be8   Data          16  stm32f1xx_hal_rcc.o(.rodata.cst16)
-    [Anonymous Symbol]                       0x08007be8   Section        0  stm32f1xx_hal_rcc.o(.rodata.cst16)
-    .L.str.1                                 0x08007bf8   Data          73  fire_prediction.o(.rodata.str1.1)
-    [Anonymous Symbol]                       0x08007bf8   Section        0  fire_prediction.o(.rodata.str1.1)
-    .L.str.1                                 0x08007c41   Data           6  alarm_config.o(.rodata.str1.1)
-    [Anonymous Symbol]                       0x08007c41   Section        0  alarm_config.o(.rodata.str1.1)
-    .L.str.3                                 0x08007c47   Data           5  alarm_config.o(.rodata.str1.1)
-    .L.str.2                                 0x08007c4c   Data           3  alarm_config.o(.rodata.str1.1)
-    .L.str                                   0x08007c4f   Data           5  alarm_config.o(.rodata.str1.1)
-    .L.str.50                                0x08007c58   Data          45  main.o(.rodata.str1.1)
-    [Anonymous Symbol]                       0x08007c58   Section        0  main.o(.rodata.str1.1)
-    .L.str.49                                0x08007cc8   Data          53  main.o(.rodata.str1.1)
-    .L.str.54                                0x08007cfd   Data          61  main.o(.rodata.str1.1)
-    .L.str.59                                0x08007d3a   Data          54  main.o(.rodata.str1.1)
-    .L.str.41                                0x08007d70   Data          53  main.o(.rodata.str1.1)
-    .Lstr.82                                 0x08007da5   Data          15  main.o(.rodata.str1.1)
-    .Lstr.80                                 0x08007db4   Data          27  main.o(.rodata.str1.1)
-    .L.str.64                                0x08007dbf   Data          67  main.o(.rodata.str1.1)
-    .Lstr                                    0x08007dcf   Data          24  main.o(.rodata.str1.1)
-    .Lstr.69                                 0x08007de7   Data          18  main.o(.rodata.str1.1)
-    .Lstr.79                                 0x08007df9   Data          44  main.o(.rodata.str1.1)
-    .Lstr.77                                 0x08007e25   Data          30  main.o(.rodata.str1.1)
-    .L.str.65                                0x08007e57   Data           9  main.o(.rodata.str1.1)
-    .L.str.67                                0x08007e60   Data           8  main.o(.rodata.str1.1)
-    .L.str.7                                 0x08007e78   Data          13  main.o(.rodata.str1.1)
-    .L.str.60                                0x08007e85   Data           3  main.o(.rodata.str1.1)
-    .L.str.68                                0x08007e88   Data          14  main.o(.rodata.str1.1)
-    .L.str.66                                0x08007e96   Data          10  main.o(.rodata.str1.1)
-    .L.str.39                                0x08007ea0   Data          21  main.o(.rodata.str1.1)
-    .L.str.40                                0x08007eb5   Data          19  main.o(.rodata.str1.1)
-    .L.str.25                                0x08007ec7   Data           1  main.o(.rodata.str1.1)
+    [Anonymous Symbol]                       0x080062c0   Section        0  stm32f1xx_it.o(.text.SysTick_Handler)
+    [Anonymous Symbol]                       0x080062c4   Section        0  main.o(.text.SystemClock_Config)
+    [Anonymous Symbol]                       0x080063a8   Section        0  system_stm32f1xx.o(.text.SystemInit)
+    [Anonymous Symbol]                       0x080063ac   Section        0  main.o(.text.System_Init)
+    UART_DMAAbortOnError                     0x0800653d   Thumb Code    12  stm32f1xx_hal_uart.o(.text.UART_DMAAbortOnError)
+    [Anonymous Symbol]                       0x0800653c   Section        0  stm32f1xx_hal_uart.o(.text.UART_DMAAbortOnError)
+    UART_Receive_IT                          0x08006549   Thumb Code   254  stm32f1xx_hal_uart.o(.text.UART_Receive_IT)
+    [Anonymous Symbol]                       0x08006548   Section        0  stm32f1xx_hal_uart.o(.text.UART_Receive_IT)
+    [Anonymous Symbol]                       0x08006648   Section        0  stm32f1xx_it.o(.text.USART1_IRQHandler)
+    [Anonymous Symbol]                       0x08006654   Section        0  stm32f1xx_it.o(.text.UsageFault_Handler)
+    [Anonymous Symbol]                       0x08006658   Section        0  main.o(.text.fputc)
+    [Anonymous Symbol]                       0x08006678   Section        0  main.o(.text.main)
+    i.__0printf                              0x08006854   Section        0  printfa.o(i.__0printf)
+    i.__0sprintf                             0x08006874   Section        0  printfa.o(i.__0sprintf)
+    i.__ARM_fpclassifyf                      0x0800689c   Section        0  fpclassifyf.o(i.__ARM_fpclassifyf)
+    i.__mathlib_flt_infnan                   0x080068c2   Section        0  funder.o(i.__mathlib_flt_infnan)
+    i.__mathlib_flt_overflow                 0x080068c8   Section        0  funder.o(i.__mathlib_flt_overflow)
+    i.__mathlib_flt_underflow                0x080068d2   Section        0  funder.o(i.__mathlib_flt_underflow)
+    i.__read_errno                           0x080068dc   Section        0  errno.o(i.__read_errno)
+    i.__scatterload_copy                     0x080068e8   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x080068f6   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x080068f8   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.__set_errno                            0x08006908   Section        0  errno.o(i.__set_errno)
+    _fp_digits                               0x08006915   Thumb Code   366  printfa.o(i._fp_digits)
+    i._fp_digits                             0x08006914   Section        0  printfa.o(i._fp_digits)
+    i._is_digit                              0x08006a98   Section        0  scanf_fp.o(i._is_digit)
+    _printf_core                             0x08006aa9   Thumb Code  1744  printfa.o(i._printf_core)
+    i._printf_core                           0x08006aa8   Section        0  printfa.o(i._printf_core)
+    _printf_post_padding                     0x08007185   Thumb Code    36  printfa.o(i._printf_post_padding)
+    i._printf_post_padding                   0x08007184   Section        0  printfa.o(i._printf_post_padding)
+    _printf_pre_padding                      0x080071a9   Thumb Code    46  printfa.o(i._printf_pre_padding)
+    i._printf_pre_padding                    0x080071a8   Section        0  printfa.o(i._printf_pre_padding)
+    _sputc                                   0x080071d7   Thumb Code    10  printfa.o(i._sputc)
+    i._sputc                                 0x080071d6   Section        0  printfa.o(i._sputc)
+    i.atof                                   0x080071e0   Section        0  atof.o(i.atof)
+    i.expf                                   0x0800720c   Section        0  expf.o(i.expf)
+    i.puts                                   0x08007380   Section        0  puts.o(i.puts)
+    twotokover4top                           0x080073a4   Data          16  expf.o(.constdata)
+    .constdata                               0x080073a4   Section       48  expf.o(.constdata)
+    twotokover4bot                           0x080073b4   Data          16  expf.o(.constdata)
+    twotokover4all                           0x080073c4   Data          16  expf.o(.constdata)
+    .constdata                               0x080073d4   Section       64  ctype_c.o(.constdata)
+    .L__const.Check_Alarm.alarmLevelNames    0x08007414   Data          20  main.o(.rodata..L__const.Check_Alarm.alarmLevelNames)
+    .L__const.ProcessSerialCommand.response  0x08007428   Data          20  main.o(.rodata..L__const.ProcessSerialCommand.response)
+    HAL_RCC_GetSysClockFreq.aPredivFactorTable 0x08007454   Data           2  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
+    [Anonymous Symbol]                       0x08007454   Section        0  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
+    HAL_RCC_GetSysClockFreq.aPLLMULFactorTable 0x08007c80   Data          16  stm32f1xx_hal_rcc.o(.rodata.cst16)
+    [Anonymous Symbol]                       0x08007c80   Section        0  stm32f1xx_hal_rcc.o(.rodata.cst16)
+    .L.str.1                                 0x08007c90   Data          73  fire_prediction.o(.rodata.str1.1)
+    [Anonymous Symbol]                       0x08007c90   Section        0  fire_prediction.o(.rodata.str1.1)
+    .L.str.1                                 0x08007cd9   Data           6  alarm_config.o(.rodata.str1.1)
+    [Anonymous Symbol]                       0x08007cd9   Section        0  alarm_config.o(.rodata.str1.1)
+    .L.str.3                                 0x08007cdf   Data           5  alarm_config.o(.rodata.str1.1)
+    .L.str.2                                 0x08007ce4   Data           3  alarm_config.o(.rodata.str1.1)
+    .L.str                                   0x08007ce7   Data           5  alarm_config.o(.rodata.str1.1)
+    .L.str.50                                0x08007cf0   Data          45  main.o(.rodata.str1.1)
+    [Anonymous Symbol]                       0x08007cf0   Section        0  main.o(.rodata.str1.1)
+    .L.str.49                                0x08007d60   Data          53  main.o(.rodata.str1.1)
+    .L.str.54                                0x08007d95   Data          61  main.o(.rodata.str1.1)
+    .L.str.59                                0x08007dd2   Data          54  main.o(.rodata.str1.1)
+    .L.str.41                                0x08007e08   Data          53  main.o(.rodata.str1.1)
+    .Lstr.82                                 0x08007e3d   Data          15  main.o(.rodata.str1.1)
+    .Lstr.80                                 0x08007e4c   Data          27  main.o(.rodata.str1.1)
+    .L.str.64                                0x08007e57   Data          67  main.o(.rodata.str1.1)
+    .Lstr                                    0x08007e67   Data          24  main.o(.rodata.str1.1)
+    .Lstr.69                                 0x08007e7f   Data          18  main.o(.rodata.str1.1)
+    .Lstr.79                                 0x08007e91   Data          44  main.o(.rodata.str1.1)
+    .Lstr.77                                 0x08007ebd   Data          30  main.o(.rodata.str1.1)
+    .L.str.65                                0x08007eef   Data           9  main.o(.rodata.str1.1)
+    .L.str.67                                0x08007ef8   Data           8  main.o(.rodata.str1.1)
+    .L.str.7                                 0x08007f10   Data          13  main.o(.rodata.str1.1)
+    .L.str.60                                0x08007f1d   Data           3  main.o(.rodata.str1.1)
+    .L.str.68                                0x08007f20   Data          14  main.o(.rodata.str1.1)
+    .L.str.66                                0x08007f2e   Data          10  main.o(.rodata.str1.1)
+    .L.str.39                                0x08007f38   Data          21  main.o(.rodata.str1.1)
+    .L.str.40                                0x08007f4d   Data          19  main.o(.rodata.str1.1)
+    .L.str.25                                0x08007f5f   Data           1  main.o(.rodata.str1.1)
     .data                                    0x20000000   Section        4  stdout.o(.data)
     _errno                                   0x20000004   Data           4  errno.o(.data)
     .data                                    0x20000004   Section        4  errno.o(.data)
@@ -2708,46 +2710,46 @@ Image Symbol Table
     ProcessSerialCommand                     0x08005d35   Thumb Code   616  main.o(.text.ProcessSerialCommand)
     SVC_Handler                              0x08006039   Thumb Code     2  stm32f1xx_it.o(.text.SVC_Handler)
     Sensors_Init                             0x0800603d   Thumb Code    30  sensors.o(.text.Sensors_Init)
-    Sensors_Read                             0x0800605d   Thumb Code   364  main.o(.text.Sensors_Read)
-    SysTick_Handler                          0x08006229   Thumb Code     4  stm32f1xx_it.o(.text.SysTick_Handler)
-    SystemClock_Config                       0x0800622d   Thumb Code   228  main.o(.text.SystemClock_Config)
-    SystemInit                               0x08006311   Thumb Code     2  system_stm32f1xx.o(.text.SystemInit)
-    System_Init                              0x08006315   Thumb Code   260  main.o(.text.System_Init)
-    USART1_IRQHandler                        0x080065b1   Thumb Code    12  stm32f1xx_it.o(.text.USART1_IRQHandler)
-    UsageFault_Handler                       0x080065bd   Thumb Code     2  stm32f1xx_it.o(.text.UsageFault_Handler)
-    fputc                                    0x080065c1   Thumb Code    30  main.o(.text.fputc)
-    main                                     0x080065e1   Thumb Code   332  main.o(.text.main)
-    __0printf                                0x080067bd   Thumb Code    22  printfa.o(i.__0printf)
-    __1printf                                0x080067bd   Thumb Code     0  printfa.o(i.__0printf)
-    __2printf                                0x080067bd   Thumb Code     0  printfa.o(i.__0printf)
-    __c89printf                              0x080067bd   Thumb Code     0  printfa.o(i.__0printf)
-    printf                                   0x080067bd   Thumb Code     0  printfa.o(i.__0printf)
-    __0sprintf                               0x080067dd   Thumb Code    34  printfa.o(i.__0sprintf)
-    __1sprintf                               0x080067dd   Thumb Code     0  printfa.o(i.__0sprintf)
-    __2sprintf                               0x080067dd   Thumb Code     0  printfa.o(i.__0sprintf)
-    __c89sprintf                             0x080067dd   Thumb Code     0  printfa.o(i.__0sprintf)
-    sprintf                                  0x080067dd   Thumb Code     0  printfa.o(i.__0sprintf)
-    __ARM_fpclassifyf                        0x08006805   Thumb Code    38  fpclassifyf.o(i.__ARM_fpclassifyf)
-    __mathlib_flt_infnan                     0x0800682b   Thumb Code     6  funder.o(i.__mathlib_flt_infnan)
-    __mathlib_flt_overflow                   0x08006831   Thumb Code    10  funder.o(i.__mathlib_flt_overflow)
-    __mathlib_flt_underflow                  0x0800683b   Thumb Code    10  funder.o(i.__mathlib_flt_underflow)
-    __read_errno                             0x08006845   Thumb Code     6  errno.o(i.__read_errno)
-    __scatterload_copy                       0x08006851   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x0800685f   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x08006861   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    __set_errno                              0x08006871   Thumb Code     6  errno.o(i.__set_errno)
-    _is_digit                                0x08006a01   Thumb Code    14  scanf_fp.o(i._is_digit)
-    atof                                     0x08007149   Thumb Code    44  atof.o(i.atof)
-    __mathlib_expf                           0x08007175   Thumb Code     0  expf.o(i.expf)
-    expf                                     0x08007175   Thumb Code   326  expf.o(i.expf)
-    puts                                     0x080072e9   Thumb Code    30  puts.o(i.puts)
-    __ctype_categories                       0x0800733c   Data          64  ctype_c.o(.constdata)
-    AHBPrescTable                            0x080073a4   Data          16  system_stm32f1xx.o(.rodata.AHBPrescTable)
-    APBPrescTable                            0x080073b4   Data           8  system_stm32f1xx.o(.rodata.APBPrescTable)
-    OLED_F6x8                                0x080073be   Data         570  oled_data.o(.rodata.OLED_F6x8)
-    OLED_F8x16                               0x080075f8   Data        1520  oled_data.o(.rodata.OLED_F8x16)
-    Region$$Table$$Base                      0x08007ec8   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08007ee8   Number         0  anon$$obj.o(Region$$Table)
+    Sensors_Read                             0x0800605d   Thumb Code   516  main.o(.text.Sensors_Read)
+    SysTick_Handler                          0x080062c1   Thumb Code     4  stm32f1xx_it.o(.text.SysTick_Handler)
+    SystemClock_Config                       0x080062c5   Thumb Code   228  main.o(.text.SystemClock_Config)
+    SystemInit                               0x080063a9   Thumb Code     2  system_stm32f1xx.o(.text.SystemInit)
+    System_Init                              0x080063ad   Thumb Code   260  main.o(.text.System_Init)
+    USART1_IRQHandler                        0x08006649   Thumb Code    12  stm32f1xx_it.o(.text.USART1_IRQHandler)
+    UsageFault_Handler                       0x08006655   Thumb Code     2  stm32f1xx_it.o(.text.UsageFault_Handler)
+    fputc                                    0x08006659   Thumb Code    30  main.o(.text.fputc)
+    main                                     0x08006679   Thumb Code   332  main.o(.text.main)
+    __0printf                                0x08006855   Thumb Code    22  printfa.o(i.__0printf)
+    __1printf                                0x08006855   Thumb Code     0  printfa.o(i.__0printf)
+    __2printf                                0x08006855   Thumb Code     0  printfa.o(i.__0printf)
+    __c89printf                              0x08006855   Thumb Code     0  printfa.o(i.__0printf)
+    printf                                   0x08006855   Thumb Code     0  printfa.o(i.__0printf)
+    __0sprintf                               0x08006875   Thumb Code    34  printfa.o(i.__0sprintf)
+    __1sprintf                               0x08006875   Thumb Code     0  printfa.o(i.__0sprintf)
+    __2sprintf                               0x08006875   Thumb Code     0  printfa.o(i.__0sprintf)
+    __c89sprintf                             0x08006875   Thumb Code     0  printfa.o(i.__0sprintf)
+    sprintf                                  0x08006875   Thumb Code     0  printfa.o(i.__0sprintf)
+    __ARM_fpclassifyf                        0x0800689d   Thumb Code    38  fpclassifyf.o(i.__ARM_fpclassifyf)
+    __mathlib_flt_infnan                     0x080068c3   Thumb Code     6  funder.o(i.__mathlib_flt_infnan)
+    __mathlib_flt_overflow                   0x080068c9   Thumb Code    10  funder.o(i.__mathlib_flt_overflow)
+    __mathlib_flt_underflow                  0x080068d3   Thumb Code    10  funder.o(i.__mathlib_flt_underflow)
+    __read_errno                             0x080068dd   Thumb Code     6  errno.o(i.__read_errno)
+    __scatterload_copy                       0x080068e9   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x080068f7   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x080068f9   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    __set_errno                              0x08006909   Thumb Code     6  errno.o(i.__set_errno)
+    _is_digit                                0x08006a99   Thumb Code    14  scanf_fp.o(i._is_digit)
+    atof                                     0x080071e1   Thumb Code    44  atof.o(i.atof)
+    __mathlib_expf                           0x0800720d   Thumb Code     0  expf.o(i.expf)
+    expf                                     0x0800720d   Thumb Code   326  expf.o(i.expf)
+    puts                                     0x08007381   Thumb Code    30  puts.o(i.puts)
+    __ctype_categories                       0x080073d4   Data          64  ctype_c.o(.constdata)
+    AHBPrescTable                            0x0800743c   Data          16  system_stm32f1xx.o(.rodata.AHBPrescTable)
+    APBPrescTable                            0x0800744c   Data           8  system_stm32f1xx.o(.rodata.APBPrescTable)
+    OLED_F6x8                                0x08007456   Data         570  oled_data.o(.rodata.OLED_F6x8)
+    OLED_F8x16                               0x08007690   Data        1520  oled_data.o(.rodata.OLED_F8x16)
+    Region$$Table$$Base                      0x08007f60   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08007f80   Number         0  anon$$obj.o(Region$$Table)
     __stdout                                 0x20000000   Data           4  stdout.o(.data)
     uwTickFreq                               0x20000008   Data           1  stm32f1xx_hal.o(.data..L_MergedGlobals)
     uwTickPrio                               0x2000000c   Data           4  stm32f1xx_hal.o(.data..L_MergedGlobals)
@@ -2769,9 +2771,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00007f00, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00007f98, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00007ee8, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00007f80, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2965,71 +2967,71 @@ Memory Map of the image
     0x0800603a   0x0800603a   0x00000002   PAD
     0x0800603c   0x0800603c   0x0000001e   Code   RO          133    .text.Sensors_Init  sensors.o
     0x0800605a   0x0800605a   0x00000002   PAD
-    0x0800605c   0x0800605c   0x000001cc   Code   RO          252    .text.Sensors_Read  main.o
-    0x08006228   0x08006228   0x00000004   Code   RO          361    .text.SysTick_Handler  stm32f1xx_it.o
-    0x0800622c   0x0800622c   0x000000e4   Code   RO          248    .text.SystemClock_Config  main.o
-    0x08006310   0x08006310   0x00000002   Code   RO          948    .text.SystemInit    system_stm32f1xx.o
-    0x08006312   0x08006312   0x00000002   PAD
-    0x08006314   0x08006314   0x00000190   Code   RO          250    .text.System_Init   main.o
-    0x080064a4   0x080064a4   0x0000000c   Code   RO          908    .text.UART_DMAAbortOnError  stm32f1xx_hal_uart.o
-    0x080064b0   0x080064b0   0x000000fe   Code   RO          906    .text.UART_Receive_IT  stm32f1xx_hal_uart.o
-    0x080065ae   0x080065ae   0x00000002   PAD
-    0x080065b0   0x080065b0   0x0000000c   Code   RO          367    .text.USART1_IRQHandler  stm32f1xx_it.o
-    0x080065bc   0x080065bc   0x00000002   Code   RO          353    .text.UsageFault_Handler  stm32f1xx_it.o
-    0x080065be   0x080065be   0x00000002   PAD
-    0x080065c0   0x080065c0   0x0000001e   Code   RO          272    .text.fputc         main.o
-    0x080065de   0x080065de   0x00000002   PAD
-    0x080065e0   0x080065e0   0x000001dc   Code   RO          246    .text.main          main.o
-    0x080067bc   0x080067bc   0x00000020   Code   RO         1229    i.__0printf         mc_w.l(printfa.o)
-    0x080067dc   0x080067dc   0x00000028   Code   RO         1231    i.__0sprintf        mc_w.l(printfa.o)
-    0x08006804   0x08006804   0x00000026   Code   RO         1320    i.__ARM_fpclassifyf  m_ws.l(fpclassifyf.o)
-    0x0800682a   0x0800682a   0x00000006   Code   RO         1323    i.__mathlib_flt_infnan  m_ws.l(funder.o)
-    0x08006830   0x08006830   0x0000000a   Code   RO         1326    i.__mathlib_flt_overflow  m_ws.l(funder.o)
-    0x0800683a   0x0800683a   0x0000000a   Code   RO         1328    i.__mathlib_flt_underflow  m_ws.l(funder.o)
-    0x08006844   0x08006844   0x0000000c   Code   RO         1372    i.__read_errno      mc_w.l(errno.o)
-    0x08006850   0x08006850   0x0000000e   Code   RO         1420    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x0800685e   0x0800685e   0x00000002   Code   RO         1421    i.__scatterload_null  mc_w.l(handlers.o)
-    0x08006860   0x08006860   0x0000000e   Code   RO         1422    i.__scatterload_zeroinit  mc_w.l(handlers.o)
-    0x0800686e   0x0800686e   0x00000002   PAD
-    0x08006870   0x08006870   0x0000000c   Code   RO         1373    i.__set_errno       mc_w.l(errno.o)
-    0x0800687c   0x0800687c   0x00000184   Code   RO         1236    i._fp_digits        mc_w.l(printfa.o)
-    0x08006a00   0x08006a00   0x0000000e   Code   RO         1407    i._is_digit         mc_w.l(scanf_fp.o)
-    0x08006a0e   0x08006a0e   0x00000002   PAD
-    0x08006a10   0x08006a10   0x000006dc   Code   RO         1237    i._printf_core      mc_w.l(printfa.o)
-    0x080070ec   0x080070ec   0x00000024   Code   RO         1238    i._printf_post_padding  mc_w.l(printfa.o)
-    0x08007110   0x08007110   0x0000002e   Code   RO         1239    i._printf_pre_padding  mc_w.l(printfa.o)
-    0x0800713e   0x0800713e   0x0000000a   Code   RO         1241    i._sputc            mc_w.l(printfa.o)
-    0x08007148   0x08007148   0x0000002c   Code   RO          967    i.atof              m_ws.l(atof.o)
-    0x08007174   0x08007174   0x00000174   Code   RO          971    i.expf              m_ws.l(expf.o)
-    0x080072e8   0x080072e8   0x00000024   Code   RO          980    i.puts              mc_w.l(puts.o)
-    0x0800730c   0x0800730c   0x00000030   Data   RO          972    .constdata          m_ws.l(expf.o)
-    0x0800733c   0x0800733c   0x00000040   Data   RO         1414    .constdata          mc_w.l(ctype_c.o)
-    0x0800737c   0x0800737c   0x00000014   Data   RO          283    .rodata..L__const.Check_Alarm.alarmLevelNames  main.o
-    0x08007390   0x08007390   0x00000014   Data   RO          285    .rodata..L__const.ProcessSerialCommand.response  main.o
-    0x080073a4   0x080073a4   0x00000010   Data   RO          953    .rodata.AHBPrescTable  system_stm32f1xx.o
-    0x080073b4   0x080073b4   0x00000008   Data   RO          954    .rodata.APBPrescTable  system_stm32f1xx.o
-    0x080073bc   0x080073bc   0x00000002   Data   RO          584    .rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable  stm32f1xx_hal_rcc.o
-    0x080073be   0x080073be   0x0000023a   Data   RO           93    .rodata.OLED_F6x8   oled_data.o
-    0x080075f8   0x080075f8   0x000005f0   Data   RO           92    .rodata.OLED_F8x16  oled_data.o
-    0x08007be8   0x08007be8   0x00000010   Data   RO          583    .rodata.cst16       stm32f1xx_hal_rcc.o
-    0x08007bf8   0x08007bf8   0x00000049   Data   RO          176    .rodata.str1.1      fire_prediction.o
-    0x08007c41   0x08007c41   0x00000017   Data   RO          237    .rodata.str1.1      alarm_config.o
-    0x08007c58   0x08007c58   0x00000270   Data   RO          281    .rodata.str1.1      main.o
-    0x08007ec8   0x08007ec8   0x00000020   Data   RO         1419    Region$$Table       anon$$obj.o
+    0x0800605c   0x0800605c   0x00000264   Code   RO          252    .text.Sensors_Read  main.o
+    0x080062c0   0x080062c0   0x00000004   Code   RO          361    .text.SysTick_Handler  stm32f1xx_it.o
+    0x080062c4   0x080062c4   0x000000e4   Code   RO          248    .text.SystemClock_Config  main.o
+    0x080063a8   0x080063a8   0x00000002   Code   RO          948    .text.SystemInit    system_stm32f1xx.o
+    0x080063aa   0x080063aa   0x00000002   PAD
+    0x080063ac   0x080063ac   0x00000190   Code   RO          250    .text.System_Init   main.o
+    0x0800653c   0x0800653c   0x0000000c   Code   RO          908    .text.UART_DMAAbortOnError  stm32f1xx_hal_uart.o
+    0x08006548   0x08006548   0x000000fe   Code   RO          906    .text.UART_Receive_IT  stm32f1xx_hal_uart.o
+    0x08006646   0x08006646   0x00000002   PAD
+    0x08006648   0x08006648   0x0000000c   Code   RO          367    .text.USART1_IRQHandler  stm32f1xx_it.o
+    0x08006654   0x08006654   0x00000002   Code   RO          353    .text.UsageFault_Handler  stm32f1xx_it.o
+    0x08006656   0x08006656   0x00000002   PAD
+    0x08006658   0x08006658   0x0000001e   Code   RO          272    .text.fputc         main.o
+    0x08006676   0x08006676   0x00000002   PAD
+    0x08006678   0x08006678   0x000001dc   Code   RO          246    .text.main          main.o
+    0x08006854   0x08006854   0x00000020   Code   RO         1229    i.__0printf         mc_w.l(printfa.o)
+    0x08006874   0x08006874   0x00000028   Code   RO         1231    i.__0sprintf        mc_w.l(printfa.o)
+    0x0800689c   0x0800689c   0x00000026   Code   RO         1320    i.__ARM_fpclassifyf  m_ws.l(fpclassifyf.o)
+    0x080068c2   0x080068c2   0x00000006   Code   RO         1323    i.__mathlib_flt_infnan  m_ws.l(funder.o)
+    0x080068c8   0x080068c8   0x0000000a   Code   RO         1326    i.__mathlib_flt_overflow  m_ws.l(funder.o)
+    0x080068d2   0x080068d2   0x0000000a   Code   RO         1328    i.__mathlib_flt_underflow  m_ws.l(funder.o)
+    0x080068dc   0x080068dc   0x0000000c   Code   RO         1372    i.__read_errno      mc_w.l(errno.o)
+    0x080068e8   0x080068e8   0x0000000e   Code   RO         1420    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x080068f6   0x080068f6   0x00000002   Code   RO         1421    i.__scatterload_null  mc_w.l(handlers.o)
+    0x080068f8   0x080068f8   0x0000000e   Code   RO         1422    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x08006906   0x08006906   0x00000002   PAD
+    0x08006908   0x08006908   0x0000000c   Code   RO         1373    i.__set_errno       mc_w.l(errno.o)
+    0x08006914   0x08006914   0x00000184   Code   RO         1236    i._fp_digits        mc_w.l(printfa.o)
+    0x08006a98   0x08006a98   0x0000000e   Code   RO         1407    i._is_digit         mc_w.l(scanf_fp.o)
+    0x08006aa6   0x08006aa6   0x00000002   PAD
+    0x08006aa8   0x08006aa8   0x000006dc   Code   RO         1237    i._printf_core      mc_w.l(printfa.o)
+    0x08007184   0x08007184   0x00000024   Code   RO         1238    i._printf_post_padding  mc_w.l(printfa.o)
+    0x080071a8   0x080071a8   0x0000002e   Code   RO         1239    i._printf_pre_padding  mc_w.l(printfa.o)
+    0x080071d6   0x080071d6   0x0000000a   Code   RO         1241    i._sputc            mc_w.l(printfa.o)
+    0x080071e0   0x080071e0   0x0000002c   Code   RO          967    i.atof              m_ws.l(atof.o)
+    0x0800720c   0x0800720c   0x00000174   Code   RO          971    i.expf              m_ws.l(expf.o)
+    0x08007380   0x08007380   0x00000024   Code   RO          980    i.puts              mc_w.l(puts.o)
+    0x080073a4   0x080073a4   0x00000030   Data   RO          972    .constdata          m_ws.l(expf.o)
+    0x080073d4   0x080073d4   0x00000040   Data   RO         1414    .constdata          mc_w.l(ctype_c.o)
+    0x08007414   0x08007414   0x00000014   Data   RO          283    .rodata..L__const.Check_Alarm.alarmLevelNames  main.o
+    0x08007428   0x08007428   0x00000014   Data   RO          285    .rodata..L__const.ProcessSerialCommand.response  main.o
+    0x0800743c   0x0800743c   0x00000010   Data   RO          953    .rodata.AHBPrescTable  system_stm32f1xx.o
+    0x0800744c   0x0800744c   0x00000008   Data   RO          954    .rodata.APBPrescTable  system_stm32f1xx.o
+    0x08007454   0x08007454   0x00000002   Data   RO          584    .rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable  stm32f1xx_hal_rcc.o
+    0x08007456   0x08007456   0x0000023a   Data   RO           93    .rodata.OLED_F6x8   oled_data.o
+    0x08007690   0x08007690   0x000005f0   Data   RO           92    .rodata.OLED_F8x16  oled_data.o
+    0x08007c80   0x08007c80   0x00000010   Data   RO          583    .rodata.cst16       stm32f1xx_hal_rcc.o
+    0x08007c90   0x08007c90   0x00000049   Data   RO          176    .rodata.str1.1      fire_prediction.o
+    0x08007cd9   0x08007cd9   0x00000017   Data   RO          237    .rodata.str1.1      alarm_config.o
+    0x08007cf0   0x08007cf0   0x00000270   Data   RO          281    .rodata.str1.1      main.o
+    0x08007f60   0x08007f60   0x00000020   Data   RO         1419    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08007ee8, Size: 0x00000c98, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08007f80, Size: 0x00000c98, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08007ee8   0x00000004   Data   RW         1351    .data               mc_w.l(stdout.o)
-    0x20000004   0x08007eec   0x00000004   Data   RW         1374    .data               mc_w.l(errno.o)
-    0x20000008   0x08007ef0   0x00000008   Data   RW          546    .data..L_MergedGlobals  stm32f1xx_hal.o
-    0x20000010   0x08007ef8   0x00000004   Data   RW          952    .data.SystemCoreClock  system_stm32f1xx.o
-    0x20000014   0x08007efc   0x00000004   PAD
+    0x20000000   0x08007f80   0x00000004   Data   RW         1351    .data               mc_w.l(stdout.o)
+    0x20000004   0x08007f84   0x00000004   Data   RW         1374    .data               mc_w.l(errno.o)
+    0x20000008   0x08007f88   0x00000008   Data   RW          546    .data..L_MergedGlobals  stm32f1xx_hal.o
+    0x20000010   0x08007f90   0x00000004   Data   RW          952    .data.SystemCoreClock  system_stm32f1xx.o
+    0x20000014   0x08007f94   0x00000004   PAD
     0x20000018        -       0x00000068   Zero   RW          286    .bss..L_MergedGlobals  main.o
     0x20000080        -       0x00000001   Zero   RW          124    .bss.DWT_Init.initialized  ds18b20.o
-    0x20000081   0x08007efc   0x00000003   PAD
+    0x20000081   0x08007f94   0x00000003   PAD
     0x20000084        -       0x00000004   Zero   RW          175    .bss.FirePredictor_CalculateRisk.lastDebug  fire_prediction.o
     0x20000088        -       0x00000400   Zero   RW           83    .bss.OLED_DisplayBuf  oled.o
     0x20000488        -       0x0000001c   Zero   RW          236    .bss.g_alarmConfig  alarm_config.o
@@ -3054,7 +3056,7 @@ Image component sizes
       1980          0          0          0          1       8248   ds18b20.o
       2902         52         73          0          4      11934   fire_prediction.o
        200          0          0          0          0       1780   gpio.o
-      4054        876        664          0        924      14975   main.o
+      4206        876        664          0        924      15247   main.o
       3558          0          0          0       1024      56560   oled.o
          0          0       2090          0          0        573   oled_data.o
         30          0          0          0          0      10069   sensors.o
@@ -3074,7 +3076,7 @@ Image component sizes
        198          0          0          0         72       5631   usart.o
 
     ----------------------------------------------------------------------
-     22652        992       3160         12       3204     226135   Object Totals
+     22804        992       3160         12       3204     226407   Object Totals
          0          0         32          0          0          0   (incl. Generated)
        100          0          0          0          7          0   (incl. Padding)
 
@@ -3164,15 +3166,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     29216       1200       3272         20       3204     228019   Grand Totals
-     29216       1200       3272         20       3204     228019   ELF Image Totals
-     29216       1200       3272         20          0          0   ROM Totals
+     29368       1200       3272         20       3204     228291   Grand Totals
+     29368       1200       3272         20       3204     228291   ELF Image Totals
+     29368       1200       3272         20          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                32488 (  31.73kB)
+    Total RO  Size (Code + RO Data)                32640 (  31.88kB)
     Total RW  Size (RW Data + ZI Data)              3224 (   3.15kB)
-    Total ROM Size (Code + RO Data + RW Data)      32508 (  31.75kB)
+    Total ROM Size (Code + RO Data + RW Data)      32660 (  31.89kB)
 
 ==============================================================================
 
